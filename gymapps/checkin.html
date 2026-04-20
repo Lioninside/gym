@@ -77,6 +77,11 @@
       border-color: var(--red);
     }
 
+    .sheets-setup.connected .setup-steps,
+    .sheets-setup.connected details {
+      display: none;
+    }
+
     .sheets-toggle {
       display: flex;
       align-items: center;
@@ -650,12 +655,12 @@ function json(d) {
       if (url) {
         statusEl.textContent = 'checking…';
         statusEl.className   = 'sheets-toggle-status';
-        if (setupEl) setupEl.classList.remove('not-configured');
+        if (setupEl) { setupEl.classList.remove('not-configured'); setupEl.classList.add('connected'); }
         document.getElementById('sheetUrlInput').value = url;
       } else {
         statusEl.textContent = '✗ not connected — tap to set up';
         statusEl.className   = 'sheets-toggle-status err';
-        if (setupEl) setupEl.classList.add('not-configured');
+        if (setupEl) { setupEl.classList.add('not-configured'); setupEl.classList.remove('connected'); }
         document.getElementById('sheetsBody').classList.remove('hidden');
       }
     }
