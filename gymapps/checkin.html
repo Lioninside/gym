@@ -584,8 +584,13 @@ function json(d) {
       const url = getSheetUrl();
       if (!url) return null;
       try {
-        const res = await fetch(`${url}?action=latest`);
-        return { ok: true, data: await res.json() };
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'ping' })
+        });
+        return { ok: true };
       } catch(e) { return { ok: false }; }
     }
 
@@ -661,10 +666,6 @@ function json(d) {
         statusEl.textContent = '✗ unreachable';
         statusEl.className   = 'sheets-toggle-status err';
         document.getElementById('sheets-setup-box').classList.add('not-configured');
-      } else if (result.data) {
-        const d = result.data;
-        statusEl.textContent = `✓ ${d.date} · ${d.type}${d.duration ? ' · ' + d.duration : ''}`;
-        statusEl.className   = 'sheets-toggle-status ok';
       } else {
         statusEl.textContent = '✓ connected';
         statusEl.className   = 'sheets-toggle-status ok';
