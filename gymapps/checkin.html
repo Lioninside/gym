@@ -72,6 +72,10 @@
       overflow: hidden;
     }
 
+    .sheets-setup.not-configured {
+      border-color: var(--red);
+    }
+
     .sheets-toggle {
       display: flex;
       align-items: center;
@@ -88,7 +92,17 @@
 
     .sheets-toggle-status {
       font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .sheets-toggle-status.err { color: var(--red); }
+    .sheets-toggle-status.ok  { color: #75b798; }
+
+    .url-error {
+      font-size: 0.78rem;
       font-weight: 500;
+      color: var(--red);
+      padding: 0 2px;
     }
 
     .sheets-body {
@@ -302,7 +316,7 @@
       <button class="btn-success" onclick="startSession()">Start Training</button>
 
       <!-- Google Sheets setup -->
-      <div class="sheets-setup">
+      <div class="sheets-setup" id="sheets-setup-box">
         <div class="sheets-toggle" onclick="toggleSheetsPanel()">
           <span class="sheets-toggle-label">Google Sheets</span>
           <span class="sheets-toggle-status" id="sheetsStatus">not configured</span>
@@ -400,7 +414,10 @@ function json(d) {
           </details>
 
           <input type="text" id="sheetUrlInput" placeholder="https://script.google.com/macros/s/…/exec">
+          <div class="url-error hidden" id="urlError"></div>
           <button class="btn-primary" onclick="saveSheetUrl()">Save URL</button>
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.85rem" onclick="testSheetUrl()">Test connection</button>
+          <div class="url-error hidden" id="testResult"></div>
         </div>
       </div>
     </div>
@@ -575,25 +592,56 @@ function json(d) {
     }
 
     function saveSheetUrl() {
-      const val = document.getElementById('sheetUrlInput').value.trim();
-      if (val) {
-        localStorage.setItem('ci_sheet_url', val);
-        updateSheetsStatus();
-        document.getElementById('sheetsBody').classList.add('hidden');
+      const val     = document.getElementById('sheetUrlInput').value.trim();
+      const errEl   = document.getElementById('urlError');
+      if (!val) {
+        errEl.textContent = 'Please paste the Apps Script URL.';
+        errEl.classList.remove('hidden'); return;
+      }
+      if (!val.includes('script.google.com') && !val.startsWith('http')) {
+        errEl.textContent = 'URL must start with https://script.google.com/…';
+        errEl.classList.remove('hidden'); return;
+      }
+      errEl.classList.add('hidden');
+      localStorage.setItem('ci_sheet_url', val);
+      updateSheetsStatus();
+      document.getElementById('sheetsBody').classList.add('hidden');
+    }
+
+    async function testSheetUrl() {
+      const val    = document.getElementById('sheetUrlInput').value.trim();
+      const result = document.getElementById('testResult');
+      if (!val) { result.textContent = 'Enter a URL first.'; result.classList.remove('hidden'); return; }
+      result.textContent = 'Testing…';
+      result.style.color = '';
+      result.classList.remove('hidden');
+      try {
+        const res = await fetch(`${val}?action=get&date=${todayKey()}`);
+        await res.json();
+        result.textContent = '✓ Connection successful!';
+        result.style.color = '#75b798';
+      } catch(e) {
+        result.textContent = '✗ Failed — check URL and that deployment is set to Anyone.';
+        result.style.color = 'var(--red)';
       }
     }
 
     function updateSheetsStatus() {
-      const url = getSheetUrl();
-      const el  = document.getElementById('sheetsStatus');
+      const url     = getSheetUrl();
+      const statusEl = document.getElementById('sheetsStatus');
+      const setupEl  = document.getElementById('sheets-setup-box');
       if (url) {
-        el.textContent = '✓ connected';
-        el.style.color = '#75b798';
+        statusEl.textContent = '✓ connected';
+        statusEl.className   = 'sheets-toggle-status ok';
+        if (setupEl) setupEl.classList.remove('not-configured');
+        document.getElementById('sheetUrlInput').value = url;
       } else {
-        el.textContent = 'not configured';
-        el.style.color = '';
+        statusEl.textContent = '✗ not connected — tap to set up';
+        statusEl.className   = 'sheets-toggle-status err';
+        if (setupEl) setupEl.classList.add('not-configured');
+        // Auto-open setup panel when not configured
+        document.getElementById('sheetsBody').classList.remove('hidden');
       }
-      document.getElementById('sheetUrlInput').value = url;
     }
 
     // ── Helpers ────────────────────────────────────────
@@ -717,7 +765,7 @@ function json(d) {
 
     async function saveSession() {
       const elapsed = timer.elapsed();
-      await sheetPost({
+      const payload = {
         action:'stop', rowId:getRowId(), date:todayKey(), weekday:weekday(timer.startTs),
         start:document.getElementById('editStart').value,
         end:document.getElementById('editEnd').value,
@@ -727,7 +775,20 @@ function json(d) {
         status:'done', heartbeat_elapsed:Math.floor(elapsed/1000),
         created_at:new Date(timer.startTs).toISOString(),
         updated_at:new Date().toISOString()
-      });
+      };
+
+      if (!getSheetUrl()) {
+        // No Sheets URL — save locally and warn
+        storePending(payload);
+        if (!confirm('Google Sheets is not connected.\n\nSession saved locally and will sync when you set up Sheets.\n\nContinue?')) return;
+        LS.clear(); resetToIdle(); return;
+      }
+
+      const result = await sheetPost(payload);
+      if (!result) {
+        // sheetPost already queued it and showed sync notice
+        if (!confirm('Could not reach Google Sheets.\n\nSession saved locally and will retry next time.\n\nContinue?')) return;
+      }
       LS.clear(); resetToIdle();
     }
 
