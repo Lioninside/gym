@@ -9,13 +9,11 @@
     .ci-page {
       display: flex;
       flex-direction: column;
-      height: 100vh;
       height: 100dvh;
       padding: 16px;
       overflow: hidden;
     }
 
-    /* ── IDLE ── */
     #viewIdle {
       flex: 1;
       display: flex;
@@ -23,9 +21,8 @@
     }
 
     .ci-title {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 800;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       margin-bottom: 14px;
     }
 
@@ -49,7 +46,6 @@
     }
 
     .ex-name {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 700;
       font-size: 1.3rem;
     }
@@ -57,7 +53,7 @@
     .ex-dur {
       font-family: 'DM Mono', monospace;
       font-weight: 500;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--muted);
     }
 
@@ -72,7 +68,6 @@
       gap: 8px;
     }
 
-    /* ── EDIT ── */
     #viewEdit {
       flex: 1;
       display: flex;
@@ -80,7 +75,6 @@
     }
 
     .edit-title {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 800;
       font-size: 1.1rem;
       margin-bottom: 12px;
@@ -112,7 +106,7 @@
       border-bottom: 1px solid var(--border);
       border-radius: 0;
       padding: 4px 4px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text);
     }
 
@@ -129,7 +123,7 @@
       border-radius: 0;
       padding: 4px 4px;
       font-family: 'DM Mono', monospace;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text);
       text-align: center;
     }
@@ -147,17 +141,15 @@
       font-size: 0.7rem;
       padding: 4px 7px;
       cursor: pointer;
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 700;
     }
 
-    .edit-move-btn:active { opacity: 0.6; }
+    .edit-move-btn:active   { opacity: 0.6; }
     .edit-move-btn:disabled { opacity: 0.2; }
 
     .edit-dur-label {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 700;
-      font-size: 0.6rem;
+      font-size: 0.7rem;
       color: var(--muted);
       letter-spacing: 0.08em;
     }
@@ -168,7 +160,6 @@
       align-items: center;
     }
 
-    /* ── ACTIVE ── */
     #viewActive {
       flex: 1;
       display: flex;
@@ -185,9 +176,8 @@
     }
 
     .lap-badge {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 800;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--violet);
@@ -198,9 +188,8 @@
     }
 
     .phase-badge {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 700;
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
@@ -217,7 +206,6 @@
     }
 
     .phase-name {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 800;
       font-size: 1.6rem;
       line-height: 1.15;
@@ -225,16 +213,8 @@
       color: var(--text);
     }
 
-    .phase-name.break-name {
-      color: var(--muted);
-      font-size: 1.2rem;
-    }
-
-    .phase-name.countin-name {
-      color: var(--muted);
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
+    .phase-name.break-name   { color: var(--muted); font-size: 1.1rem; }
+    .phase-name.countin-name { color: var(--muted); font-size: 1.1rem; font-weight: 700; }
 
     .countdown-display {
       font-family: 'DM Mono', monospace;
@@ -245,11 +225,10 @@
       letter-spacing: -0.03em;
     }
 
-    .countdown-display.break-color { color: var(--amber); }
+    .countdown-display.break-color   { color: var(--amber); }
     .countdown-display.countin-color { color: var(--violet); }
 
     .next-hint {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 700;
       font-size: 0.7rem;
       letter-spacing: 0.1em;
@@ -258,7 +237,6 @@
       margin-top: 12px;
     }
 
-    /* ── DONE ── */
     #viewDone {
       flex: 1;
       display: flex;
@@ -270,16 +248,14 @@
     }
 
     .done-title {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 800;
       font-size: 2.4rem;
       color: var(--green);
     }
 
     .done-sub {
-      font-family: 'Inter', system-ui, sans-serif;
       font-weight: 700;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: var(--muted);
@@ -344,8 +320,8 @@
 
   <script src="shared.js"></script>
   <script>
-    const LAPS           = 3;
-    const BREAK_DURATION = 8;
+    const LAPS             = 3;
+    const BREAK_DURATION   = 8;
     const COUNTIN_DURATION = 5;
 
     const DEFAULT_EXERCISES = [
@@ -369,7 +345,6 @@
       localStorage.setItem('ci_exercises', JSON.stringify(exercises));
     }
 
-    // ── Sequence building ──────────────────────────────
     function buildSequence(exList) {
       const seq = [];
       for (let lap = 0; lap < LAPS; lap++) {
@@ -400,7 +375,6 @@
       return seq;
     }
 
-    // ── Idle render ────────────────────────────────────
     function renderIdle() {
       const list = document.getElementById('exerciseList');
       list.innerHTML = '';
@@ -417,7 +391,6 @@
 
     renderIdle();
 
-    // ── Edit mode ─────────────────────────────────────
     let editDraft = [];
 
     function showEdit() {
@@ -484,22 +457,21 @@
       showView('viewIdle');
     }
 
-    // ── Workout engine ─────────────────────────────────
-    let sequence    = [];
-    let seqIndex    = 0;
+    let sequence     = [];
+    let seqIndex     = 0;
     let phaseStartTs = 0;
-    let midBeeped   = false;
-    let rafId       = null;
+    let midBeeped    = false;
+    let rafId        = null;
 
-    const lapBadge       = document.getElementById('lapBadge');
-    const phaseBadge     = document.getElementById('phaseBadge');
-    const phaseName      = document.getElementById('phaseName');
-    const countdownDisp  = document.getElementById('countdownDisplay');
-    const nextHint       = document.getElementById('nextHint');
+    const lapBadge      = document.getElementById('lapBadge');
+    const phaseBadge    = document.getElementById('phaseBadge');
+    const phaseName     = document.getElementById('phaseName');
+    const countdownDisp = document.getElementById('countdownDisplay');
+    const nextHint      = document.getElementById('nextHint');
 
     function startWorkout() {
-      sequence   = buildSequence(exercises);
-      seqIndex   = -1; // -1 = count-in
+      sequence = buildSequence(exercises);
+      seqIndex = -1;
       beep(660, 0.08, 0.5);
       showView('viewActive');
       enterCountIn();
@@ -510,12 +482,12 @@
       phaseStartTs = Date.now();
       midBeeped    = false;
 
-      lapBadge.textContent      = 'Lap 1';
-      phaseBadge.textContent    = '';
-      phaseName.className       = 'phase-name countin-name';
-      phaseName.textContent     = 'Get into position';
-      countdownDisp.className   = 'countdown-display countin-color';
-      nextHint.textContent      = exercises[0].name;
+      lapBadge.textContent    = 'Lap 1';
+      phaseBadge.textContent  = '';
+      phaseName.className     = 'phase-name countin-name';
+      phaseName.textContent   = 'Get into position';
+      countdownDisp.className = 'countdown-display countin-color';
+      nextHint.textContent    = exercises[0].name;
 
       scheduleLoop();
     }
@@ -535,7 +507,6 @@
         nextHint.textContent    = '';
         beep(880, 0.12, 0.75);
       } else {
-        // break
         lapBadge.textContent    = `Lap ${item.lap}`;
         phaseBadge.textContent  = 'break';
         phaseName.className     = 'phase-name break-name';
@@ -554,17 +525,13 @@
     }
 
     function loop() {
-      const now       = Date.now();
-      const elapsed   = now - phaseStartTs;
+      const now     = Date.now();
+      const elapsed = now - phaseStartTs;
 
-      // Count-in phase
       if (seqIndex === -1) {
         const remaining = COUNTIN_DURATION - Math.floor(elapsed / 1000);
         countdownDisp.textContent = Math.max(0, remaining);
-        if (elapsed >= COUNTIN_DURATION * 1000) {
-          enterPhase(0);
-          return;
-        }
+        if (elapsed >= COUNTIN_DURATION * 1000) { enterPhase(0); return; }
         rafId = requestAnimationFrame(loop);
         return;
       }
@@ -573,7 +540,6 @@
       const remaining = item.duration - Math.floor(elapsed / 1000);
       countdownDisp.textContent = Math.max(0, remaining);
 
-      // Mid-beep for exercises with midBeep flag
       if (item.type === 'exercise' && item.midBeep && !midBeeped) {
         if (elapsed >= item.duration * 500) {
           midBeeped = true;
@@ -581,7 +547,6 @@
         }
       }
 
-      // Phase complete
       if (elapsed >= item.duration * 1000) {
         const next = seqIndex + 1;
         if (next >= sequence.length) {
@@ -607,11 +572,8 @@
       showView('viewIdle');
     }
 
-    function resetToIdle() {
-      showView('viewIdle');
-    }
+    function resetToIdle() { showView('viewIdle'); }
 
-    // ── View switching ─────────────────────────────────
     function showView(id) {
       ['viewIdle','viewEdit','viewActive','viewDone'].forEach(v => {
         document.getElementById(v).classList.toggle('hidden', v !== id);

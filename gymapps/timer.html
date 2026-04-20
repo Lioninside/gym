@@ -35,7 +35,7 @@
     }
 
     .dur-label {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--muted);
       text-transform: uppercase;
@@ -141,7 +141,6 @@
     const dispA    = document.getElementById('dispA');
     const dispB    = document.getElementById('dispB');
 
-    // Each timer is independent
     const timers = {
       a: { startTs: null, durSec: 0, rafId: null, beeped: false, el: dispA },
       b: { startTs: null, durSec: 0, rafId: null, beeped: false, el: dispB },
@@ -188,7 +187,6 @@
       t.rafId = requestAnimationFrame(() => tickTimer(id));
     }
 
-    // MM:SS with leading zeros
     function mmss(totalSec) {
       const m = Math.floor(totalSec / 60);
       const s = totalSec % 60;

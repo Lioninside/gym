@@ -1,4 +1,3 @@
-// Wake Lock — re-acquire on every visibility restore
 let _wakeLock = null;
 
 async function requestWakeLock() {
@@ -12,7 +11,6 @@ document.addEventListener('visibilitychange', () => {
 
 requestWakeLock();
 
-// LiveTimer — timestamp-based, pause-corrected
 class LiveTimer {
   constructor() {
     this.startTs  = null;
@@ -41,7 +39,6 @@ class LiveTimer {
     this.running  = true;
   }
 
-  // Net elapsed ms (excludes all paused time)
   elapsed() {
     if (this.startTs === null) return 0;
     const ref = this.pauseTs !== null ? this.pauseTs : Date.now();
@@ -56,7 +53,6 @@ class LiveTimer {
   }
 }
 
-// Audio
 let _audioCtx = null;
 
 function _getAudioCtx() {
@@ -85,7 +81,6 @@ function beep(freq = 880, dur = 0.12, vol = 0.75) {
   } catch(e) {}
 }
 
-// Format ms → [-]H:MM:SS or [-]M:SS
 function formatTime(ms) {
   const neg = ms < 0;
   const abs = Math.abs(ms);
@@ -100,13 +95,6 @@ function formatTime(ms) {
   return `${sign}${m}:${String(sec).padStart(2,'0')}`;
 }
 
-// Format Date → HH:MM
-function formatClock(date) {
-  const d = date || new Date();
-  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-
-// YYYY-MM-DD for today
 function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;

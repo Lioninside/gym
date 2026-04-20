@@ -92,7 +92,7 @@
     }
 
     .sheets-toggle-status {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 600;
     }
 
@@ -100,7 +100,7 @@
     .sheets-toggle-status.ok  { color: #75b798; }
 
     .url-error {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       font-weight: 500;
       color: var(--red);
       padding: 0 2px;
@@ -116,7 +116,7 @@
     .sheets-body.hidden { display: none; }
 
     .sheets-body input {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
     }
 
     .sheets-body .btn-primary {
@@ -125,7 +125,7 @@
     }
 
     .setup-steps {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--muted);
       line-height: 1.6;
     }
@@ -143,7 +143,7 @@
     }
 
     details summary {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--muted);
       cursor: pointer;
@@ -157,7 +157,7 @@
       border-radius: 8px;
       padding: 10px;
       font-family: 'DM Mono', monospace;
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       color: #c8d3f5;
       overflow-x: auto;
       white-space: pre;
@@ -166,7 +166,6 @@
       overflow-y: auto;
     }
 
-    /* ── RESUME PROMPT ── */
     #viewResume {
       flex: 1;
       display: flex;
@@ -178,7 +177,6 @@
     .resume-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
     .resume-meta  { font-family: 'DM Mono', monospace; font-size: 0.88rem; color: var(--muted); margin-bottom: 8px; }
 
-    /* ── ACTIVE ── */
     #viewActive {
       flex: 1;
       display: flex;
@@ -186,7 +184,7 @@
     }
 
     .active-type-label {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
@@ -213,7 +211,7 @@
     .active-timer.warning-color { color: var(--amber); }
 
     .active-warning {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       color: var(--amber);
       margin-top: 10px;
@@ -228,7 +226,6 @@
       padding-top: 10px;
     }
 
-    /* ── SUMMARY ── */
     #viewSummary {
       flex: 1;
       display: flex;
@@ -247,7 +244,7 @@
     }
 
     .limit-msg {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -495,7 +492,6 @@ function json(d) {
 
   <script src="shared.js"></script>
   <script>
-    // ── Config ─────────────────────────────────────────
     const WARN_MS     = 105 * 60 * 1000;
     const LIMIT_MS    = 120 * 60 * 1000;
     const HB_INTERVAL = 10  * 60 * 1000;
@@ -504,8 +500,7 @@ function json(d) {
       return localStorage.getItem('ci_sheet_url') || '';
     }
 
-    // ── State ──────────────────────────────────────────
-    let timer       = new LiveTimer();
+let timer       = new LiveTimer();
     let sessionType = 'weights';
     let rafId       = null;
     let hbTimer     = null;
@@ -537,8 +532,7 @@ function json(d) {
       }
     };
 
-    // ── Pending queue ──────────────────────────────────
-    function storePending(p) {
+function storePending(p) {
       const q = JSON.parse(localStorage.getItem('ci_pending') || '[]');
       q.push(p);
       localStorage.setItem('ci_pending', JSON.stringify(q));
@@ -555,13 +549,10 @@ function json(d) {
       localStorage.setItem('ci_pending', JSON.stringify(remaining));
     }
 
-    // ── Sheet API ──────────────────────────────────────
     async function sheetPost(data, skipQueue = false) {
       const url = getSheetUrl();
       if (!url) { if (!skipQueue) storePending(data); return null; }
       try {
-        // no-cors avoids CORS preflight — GAS doesn't send CORS headers for cross-origin POSTs.
-        // We can't read the response body in no-cors mode, so we assume success on no exception.
         await fetch(url, {
           method: 'POST',
           mode: 'no-cors',
@@ -590,8 +581,7 @@ function json(d) {
       setTimeout(() => el.classList.add('hidden'), 4000);
     }
 
-    // ── Sheets setup panel ─────────────────────────────
-    function toggleSheetsPanel() {
+function toggleSheetsPanel() {
       document.getElementById('sheetsBody').classList.toggle('hidden');
     }
 
@@ -620,8 +610,6 @@ function json(d) {
       result.style.color = '';
       result.classList.remove('hidden');
       try {
-        // Use no-cors for test too — GAS blocks CORS reads, but a successful no-cors
-        // response (opaque) confirms the URL is reachable.
         await fetch(val, {
           method: 'POST',
           mode: 'no-cors',
@@ -654,8 +642,7 @@ function json(d) {
       }
     }
 
-    // ── Helpers ────────────────────────────────────────
-    function makeRowId()      { return `${todayKey()}-${Date.now()}`; }
+function makeRowId()      { return `${todayKey()}-${Date.now()}`; }
     function getRowId()       { let id = localStorage.getItem('ci_rowId'); if (!id) { id = makeRowId(); localStorage.setItem('ci_rowId', id); } return id; }
     function tsToTimeStr(ts)  { const d = new Date(ts); return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
     function weekday(ts)      { return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(ts).getDay()]; }
@@ -664,8 +651,7 @@ function json(d) {
       return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`;
     }
 
-    // ── Type toggle ────────────────────────────────────
-    function selectType(type) {
+function selectType(type) {
       sessionType = type;
       document.getElementById('toggleWeights').classList.toggle('selected', type === 'weights');
       document.getElementById('toggleCardio').classList.toggle('selected',  type === 'cardio');
@@ -681,15 +667,13 @@ function json(d) {
       return el ? el.dataset.val : '';
     }
 
-    // ── View switching ─────────────────────────────────
-    function showView(id) {
+function showView(id) {
       ['viewIdle','viewResume','viewActive','viewSummary'].forEach(v => {
         document.getElementById(v).classList.toggle('hidden', v !== id);
       });
     }
 
-    // ── Session start ──────────────────────────────────
-    function startSession() {
+function startSession() {
       timer.start();
       sessionType = document.getElementById('toggleWeights').classList.contains('selected') ? 'weights' : 'cardio';
       warned = false; autoStopped = false;
@@ -788,7 +772,6 @@ function json(d) {
       };
 
       if (!getSheetUrl()) {
-        // No Sheets URL — save locally and warn
         storePending(payload);
         if (!confirm('Google Sheets is not connected.\n\nSession saved locally and will sync when you set up Sheets.\n\nContinue?')) return;
         LS.clear(); window.location.href = 'index.html'; return;
@@ -830,8 +813,7 @@ function json(d) {
 
     function stopHB() { if (hbTimer) { clearInterval(hbTimer); hbTimer = null; } }
 
-    // ── Init ───────────────────────────────────────────
-    async function init() {
+async function init() {
       updateSheetsStatus();
       await flushPending();
 
