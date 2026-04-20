@@ -1,10 +1,12 @@
+hier ist der Code:
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Check-in</title>
-  <link rel="stylesheet" href="shared.css" />
+  <link rel="stylesheet" href="shared.css">
   <style>
     .ci-page {
       display: flex;
@@ -15,72 +17,20 @@
       overflow: hidden;
     }
 
-    .top-bar {
-      flex-shrink: 0;
-      margin-bottom: 8px;
-    }
-
     #syncNotice {
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      border-radius: 12px;
-      padding: 10px 12px;
+      background: rgba(255,193,7,0.1);
+      border: 1px solid rgba(255,193,7,0.3);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: 500;
       color: var(--amber);
       text-align: center;
-      margin-bottom: 8px;
       flex-shrink: 0;
-    }
-
-    #statusNotice {
-      background: rgba(34, 197, 94, 0.10);
-      border: 1px solid rgba(34, 197, 94, 0.25);
-      border-radius: 12px;
-      padding: 8px 12px;
-      color: var(--green);
-      text-align: center;
       margin-bottom: 8px;
-      flex-shrink: 0;
     }
 
-    .hidden {
-      display: none !important;
-    }
-
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.5rem;
-      color: var(--text);
-      margin: 0;
-    }
-
-    .label {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-    }
-
-    input,
-    textarea {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      color: var(--text);
-      padding: 12px 14px;
-      box-sizing: border-box;
-      outline: none;
-      font: inherit;
-    }
-
-    textarea {
-      min-height: 52px;
-      resize: none;
-    }
-
+    /* ── IDLE ── */
     #viewIdle {
       flex: 1;
       display: flex;
@@ -90,38 +40,138 @@
       overflow: hidden;
     }
 
-    .toggle-group {
-      display: flex;
-      gap: 8px;
-    }
+    h1 { font-size: 1.6rem; font-weight: 700; flex-shrink: 0; }
+
+    .toggle-group { display: flex; gap: 8px; flex-shrink: 0; }
 
     .toggle-option {
       flex: 1;
-      min-height: 72px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.1s;
+    }
+
+    .toggle-option.selected {
+      border-color: var(--green);
+      color: #fff;
+      background: rgba(25,135,84,0.15);
+    }
+
+    .toggle-option:active { filter: brightness(0.85); }
+
+    /* Sheets setup */
+    .sheets-setup {
+      flex-shrink: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .sheets-setup.not-configured {
+      border-color: var(--red);
+    }
+
+    .sheets-setup.connected .setup-steps,
+    .sheets-setup.connected details {
+      display: none;
+    }
+
+    .sheets-toggle {
       display: flex;
       align-items: center;
-      justify-content: center;
-      border-radius: 18px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--muted);
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.2rem;
+      justify-content: space-between;
+      padding: 10px 14px;
       cursor: pointer;
       user-select: none;
     }
 
-    .toggle-option.selected.weights {
-      background: linear-gradient(135deg, #6c63f5 0%, #554ee8 100%);
-      color: white;
-      border-color: transparent;
+    .sheets-toggle-label {
+      font-size: 0.88rem;
+      font-weight: 600;
     }
 
-    .toggle-option.selected.cardio {
-      background: linear-gradient(135deg, #e91e8c 0%, #c21874 100%);
-      color: white;
-      border-color: transparent;
+    .sheets-toggle-status {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .sheets-toggle-status.err { color: var(--red); }
+    .sheets-toggle-status.ok  { color: #75b798; }
+
+    .url-error {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--red);
+      padding: 0 2px;
+    }
+
+    .sheets-body {
+      padding: 0 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sheets-body.hidden { display: none; }
+
+    .sheets-body input {
+      font-size: 0.8rem;
+    }
+
+    .sheets-body .btn-primary {
+      padding: 10px 14px;
+      font-size: 0.88rem;
+    }
+
+    .setup-steps {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .setup-steps ol {
+      padding-left: 16px;
+    }
+
+    .setup-steps a {
+      color: #6ea8fe;
+    }
+
+    details {
+      margin-top: 6px;
+    }
+
+    details summary {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 0;
+    }
+
+    pre.code-block {
+      background: #0a0a10;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: #c8d3f5;
+      overflow-x: auto;
+      white-space: pre;
+      margin-top: 6px;
+      max-height: 180px;
+      overflow-y: auto;
     }
 
     #viewResume {
@@ -132,19 +182,8 @@
       gap: 10px;
     }
 
-    .resume-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.5rem;
-      color: var(--text);
-    }
-
-    .resume-meta {
-      font-family: 'DM Mono', monospace;
-      font-weight: 500;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    .resume-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+    .resume-meta  { font-family: 'DM Mono', monospace; font-size: 0.88rem; color: var(--muted); margin-bottom: 8px; }
 
     #viewActive {
       flex: 1;
@@ -153,11 +192,10 @@
     }
 
     .active-type-label {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.06em;
       color: var(--muted);
       flex-shrink: 0;
     }
@@ -166,38 +204,34 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
     }
 
     .active-timer {
       font-family: 'DM Mono', monospace;
       font-weight: 500;
-      font-size: clamp(3.4rem, 14vw, 5rem);
+      font-size: 5rem;
       line-height: 1;
       color: var(--text);
     }
 
-    .active-timer.warning-color {
-      color: var(--amber);
-    }
+    .active-timer.warning-color { color: var(--amber); }
 
     .active-warning {
-      margin-top: 12px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      font-size: 0.8rem;
+      font-weight: 600;
       color: var(--amber);
-      text-align: center;
+      margin-top: 10px;
+      min-height: 1em;
     }
 
     .active-buttons {
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      flex-shrink: 0;
+      padding-top: 10px;
     }
 
     #viewSummary {
@@ -210,139 +244,213 @@
 
     .summary-elapsed {
       font-family: 'DM Mono', monospace;
-      font-weight: 500;
-      font-size: clamp(2.4rem, 10vw, 3rem);
+      font-size: 2.8rem;
       line-height: 1;
-      color: var(--green);
+      color: #75b798;
       text-align: center;
       flex-shrink: 0;
-      margin-top: 4px;
     }
 
     .limit-msg {
-      text-align: center;
-      color: var(--amber);
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.04em;
+      color: var(--amber);
+      text-align: center;
       flex-shrink: 0;
     }
 
-    .time-row {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+    .time-row { display: flex; gap: 8px; flex-shrink: 0; }
+    .time-field { flex: 1; display: flex; flex-direction: column; gap: 4px; }
 
-    .time-field {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .summary-section,
-    .summary-comment {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .chip-group {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+    .chip-group { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
 
     .chip {
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 8px;
       color: var(--muted);
-      padding: 8px 14px;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 7px 14px;
       cursor: pointer;
-      user-select: none;
+      transition: all 0.1s;
     }
 
     .chip.selected {
-      background: linear-gradient(135deg, #6c63f5 0%, #554ee8 100%);
-      border-color: transparent;
-      color: white;
+      background: rgba(13,110,253,0.15);
+      border-color: var(--blue);
+      color: #6ea8fe;
     }
 
+    .chip:active { filter: brightness(0.85); }
+
+    .summary-section { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+    .summary-comment { display: flex; flex-direction: column; gap: 5px; flex-shrink: 0; }
+    .summary-comment textarea { height: 52px; }
+
     .summary-buttons {
-      margin-top: auto;
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      flex-shrink: 0;
+      margin-top: auto;
       padding-top: 4px;
     }
   </style>
 </head>
 <body>
   <div class="ci-page">
-    <div class="top-bar">
-      <a class="back-link" href="index.html">← back</a>
-    </div>
+
+    <div class="top-bar"><a href="index.html">← Back</a></div>
 
     <div id="syncNotice" class="hidden">Saved locally — will sync on next open</div>
-    <div id="statusNotice" class="hidden"></div>
 
     <!-- IDLE -->
     <div id="viewIdle" class="hidden">
       <h1>Check-in</h1>
 
       <div>
-        <div class="label" style="margin-bottom:8px;">Training type</div>
+        <div class="label" style="margin-bottom:8px">Training type</div>
         <div class="toggle-group">
-          <div
-            class="toggle-option selected weights"
-            id="toggleWeights"
-            onclick="selectType('weights')"
-          >
-            Weights
-          </div>
-          <div
-            class="toggle-option cardio"
-            id="toggleCardio"
-            onclick="selectType('cardio')"
-          >
-            Cardio
-          </div>
+          <div class="toggle-option selected" id="toggleWeights" onclick="selectType('weights')">Weights</div>
+          <div class="toggle-option"           id="toggleCardio"  onclick="selectType('cardio')">Cardio</div>
         </div>
       </div>
 
-      <button class="btn-primary" onclick="startSession()">Start Training</button>
+      <button class="btn-success" onclick="startSession()">Start Training</button>
+
+      <!-- Google Sheets setup -->
+      <div class="sheets-setup" id="sheets-setup-box">
+        <div class="sheets-toggle" onclick="toggleSheetsPanel()">
+          <span class="sheets-toggle-label">Google Sheets</span>
+          <span class="sheets-toggle-status" id="sheetsStatus">not configured</span>
+        </div>
+        <div class="sheets-body hidden" id="sheetsBody">
+          <div class="setup-steps">
+            <ol>
+              <li>Go to <a href="https://script.google.com" target="_blank">script.google.com</a> → New project</li>
+              <li>Paste the Apps Script code below, save</li>
+              <li>Deploy → New deployment → Web app<br>Execute as: <strong>Me</strong> · Access: <strong>Anyone</strong></li>
+              <li>Copy the deployment URL and paste it here</li>
+            </ol>
+          </div>
+
+          <details>
+            <summary>Apps Script code</summary>
+            <pre class="code-block">const SHEET_NAME = 'Sessions';
+
+function doPost(e) {
+  try {
+    const d = JSON.parse(e.postData.contents);
+    const s = getSheet();
+    if (d.action === 'start') {
+      s.appendRow([d.rowId,d.date,d.weekday,d.start,
+        '','',d.type,'','','','active','',
+        d.created_at,d.created_at]);
+    } else {
+      updateRow(s, d);
+    }
+    return json({ok:true});
+  } catch(e) { return json({ok:false,error:e.toString()}); }
+}
+
+function doGet(e) {
+  try {
+    const s = getSheet();
+    const rows = s.getDataRange().getValues();
+    if (e.parameter.action==='get') {
+      for (let i=rows.length-1;i>=1;i--) {
+        if (rows[i][1]===e.parameter.date && rows[i][10]==='active') {
+          return json({rowId:rows[i][0],date:rows[i][1],
+            start:rows[i][3],type:rows[i][6],status:'active'});
+        }
+      }
+    } else if (e.parameter.action==='latest') {
+      for (let i=rows.length-1;i>=1;i--) {
+        if (rows[i][10]==='done') {
+          return json({date:rows[i][1],type:rows[i][6],duration:rows[i][5]});
+        }
+      }
+    }
+    return json(null);
+  } catch(e) { return json(null); }
+}
+
+function updateRow(s, d) {
+  const rows = s.getDataRange().getValues();
+  for (let i=1;i&lt;rows.length;i++) {
+    if (rows[i][0]!==d.rowId) continue;
+    const r = i+1;
+    if (d.action==='stop') {
+      s.getRange(r,5).setValue(d.end||'');
+      s.getRange(r,6).setValue(d.duration||'');
+      s.getRange(r,8).setValue(d.mood||'');
+      s.getRange(r,9).setValue(d.last_food||'');
+      s.getRange(r,10).setValue(d.comment||'');
+      s.getRange(r,11).setValue('done');
+      s.getRange(r,12).setValue(d.heartbeat_elapsed||'');
+      s.getRange(r,14).setValue(d.updated_at||'');
+    } else if (d.action==='heartbeat') {
+      s.getRange(r,12).setValue(d.heartbeat_elapsed||'');
+      s.getRange(r,14).setValue(d.updated_at||'');
+    } else if (d.action==='discard') {
+      s.getRange(r,11).setValue('cancelled');
+      s.getRange(r,14).setValue(d.updated_at||'');
+    }
+    return;
+  }
+}
+
+function getSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let s = ss.getSheetByName(SHEET_NAME);
+  if (!s) {
+    s = ss.insertSheet(SHEET_NAME);
+    s.appendRow(['rowId','date','weekday','start',
+      'end','duration','type','mood','last_food',
+      'comment','status','heartbeat_elapsed',
+      'created_at','updated_at']);
+  }
+  return s;
+}
+
+function json(d) {
+  return ContentService
+    .createTextOutput(JSON.stringify(d))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+          </details>
+
+          <input type="text" id="sheetUrlInput" placeholder="https://script.google.com/macros/s/…/exec">
+          <div class="url-error hidden" id="urlError"></div>
+          <button class="btn-primary" onclick="saveSheetUrl()">Save URL</button>
+          <button class="btn-secondary" style="padding:8px 14px;font-size:0.85rem" onclick="testSheetUrl()">Test connection</button>
+          <div class="url-error hidden" id="testResult"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- RESUME -->
+    <!-- RESUME PROMPT -->
     <div id="viewResume" class="hidden">
       <div class="resume-title">Active session found</div>
       <div class="resume-meta" id="resumeMeta"></div>
-      <button class="btn-primary" onclick="resumeSession()">Resume</button>
+      <button class="btn-success"   onclick="resumeSession()">Resume</button>
       <button class="btn-secondary" onclick="stopNow()">Stop now</button>
-      <button class="btn-danger" onclick="discardSession()">Discard</button>
+      <button class="btn-danger"    onclick="discardSession()">Discard</button>
     </div>
 
     <!-- ACTIVE -->
     <div id="viewActive" class="hidden">
       <div class="active-type-label" id="activeTypeLabel">Weights</div>
-
       <div class="active-center">
         <div class="active-timer" id="activeTimer">0:00</div>
         <div class="active-warning hidden" id="activeWarning">2h limit approaching</div>
       </div>
-
       <div class="active-buttons">
-        <button class="btn-secondary" id="btnPause" onclick="togglePause()">Pause Training</button>
-        <button class="btn-danger" onclick="stopSession()">Stop Training</button>
+        <button class="btn-secondary" id="btnPause" onclick="togglePause()">Pause</button>
+        <button class="btn-danger"    onclick="stopSession()">Stop</button>
       </div>
     </div>
 
@@ -354,30 +462,30 @@
       <div class="time-row">
         <div class="time-field">
           <div class="label">Start</div>
-          <input type="time" id="editStart" />
+          <input type="time" id="editStart">
         </div>
         <div class="time-field">
           <div class="label">End</div>
-          <input type="time" id="editEnd" />
+          <input type="time" id="editEnd">
         </div>
       </div>
 
       <div class="summary-section">
         <div class="label">Mood</div>
         <div class="chip-group">
-          <div class="chip" data-group="mood" data-val="Hard" onclick="selectChip(this)">Hard</div>
-          <div class="chip" data-group="mood" data-val="Tired" onclick="selectChip(this)">Tired</div>
-          <div class="chip" data-group="mood" data-val="Good" onclick="selectChip(this)">Good</div>
+          <div class="chip" data-group="mood" data-val="hard"  onclick="selectChip(this)">Hard</div>
+          <div class="chip" data-group="mood" data-val="tired" onclick="selectChip(this)">Tired</div>
+          <div class="chip" data-group="mood" data-val="good"  onclick="selectChip(this)">Good</div>
         </div>
       </div>
 
       <div class="summary-section">
         <div class="label">Last food</div>
         <div class="chip-group">
-          <div class="chip" data-group="food" data-val="<1h" onclick="selectChip(this)">&lt;1h</div>
+          <div class="chip" data-group="food" data-val="<1h"  onclick="selectChip(this)">&lt;1h</div>
           <div class="chip" data-group="food" data-val="1-2h" onclick="selectChip(this)">1–2h</div>
           <div class="chip" data-group="food" data-val="2-3h" onclick="selectChip(this)">2–3h</div>
-          <div class="chip" data-group="food" data-val="3h+" onclick="selectChip(this)">3h+</div>
+          <div class="chip" data-group="food" data-val="3h+"  onclick="selectChip(this)">3h+</div>
         </div>
       </div>
 
@@ -387,67 +495,110 @@
       </div>
 
       <div class="summary-buttons">
-        <button class="btn-primary" onclick="saveSession()">Save Session</button>
-        <button class="btn-danger" onclick="discardSummary()">Discard</button>
+        <button class="btn-success" onclick="saveSession()">Save Session</button>
+        <button class="btn-danger"  onclick="discardSummary()">Discard</button>
       </div>
     </div>
+
   </div>
 
   <script src="shared.js"></script>
   <script>
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_iuV-GmlQ_Mb4YFxUmYiY23nIaqbnTO96xqWHi6Avsn8WtT5UOooMCZuBQ_dDNj8-Yw/exec';
-    const WARN_MS = 105 * 60 * 1000;
-    const LIMIT_MS = 120 * 60 * 1000;
-    const HB_INTERVAL = 10 * 60 * 1000;
+    const WARN_MS     = 105 * 60 * 1000;
+    const LIMIT_MS    = 120 * 60 * 1000;
+    const HB_INTERVAL = 10  * 60 * 1000;
 
-    let timer = new LiveTimer();
+    function getSheetUrl() {
+      return localStorage.getItem('ci_sheet_url') || '';
+    }
+
+    let timer       = new LiveTimer();
     let sessionType = 'weights';
-    let rafId = null;
-    let hbTimer = null;
-    let warned = false;
+    let rafId       = null;
+    let hbTimer     = null;
+    let warned      = false;
     let autoStopped = false;
     let summaryEndTs = null;
 
     const LS = {
       save() {
-        localStorage.setItem('ci_startTs', timer.startTs || '');
-        localStorage.setItem('ci_pausedMs', String(timer.pausedMs || 0));
-        localStorage.setItem('ci_pauseTs', timer.pauseTs || '');
-        localStorage.setItem('ci_status', 'active');
-        localStorage.setItem('ci_type', sessionType);
+        localStorage.setItem('ci_startTs',  timer.startTs  || '');
+        localStorage.setItem('ci_pausedMs', timer.pausedMs || 0);
+        localStorage.setItem('ci_pauseTs',  timer.pauseTs  || '');
+        localStorage.setItem('ci_status',   'active');
+        localStorage.setItem('ci_type',     sessionType);
       },
-
       clear() {
-        [
-          'ci_startTs',
-          'ci_pausedMs',
-          'ci_pauseTs',
-          'ci_status',
-          'ci_type',
-          'ci_rowId'
-        ].forEach((k) => localStorage.removeItem(k));
+        ['ci_startTs','ci_pausedMs','ci_pauseTs','ci_status','ci_type','ci_rowId']
+          .forEach(k => localStorage.removeItem(k));
       },
-
       load() {
         return {
-          startTs: parseInt(localStorage.getItem('ci_startTs'), 10) || null,
-          pausedMs: parseInt(localStorage.getItem('ci_pausedMs'), 10) || 0,
-          pauseTs: parseInt(localStorage.getItem('ci_pauseTs'), 10) || null,
-          status: localStorage.getItem('ci_status'),
-          type: localStorage.getItem('ci_type') || 'weights',
-          rowId: localStorage.getItem('ci_rowId')
+          startTs:  parseInt(localStorage.getItem('ci_startTs'))  || null,
+          pausedMs: parseInt(localStorage.getItem('ci_pausedMs')) || 0,
+          pauseTs:  parseInt(localStorage.getItem('ci_pauseTs'))  || null,
+          status:   localStorage.getItem('ci_status'),
+          type:     localStorage.getItem('ci_type') || 'weights',
+          rowId:    localStorage.getItem('ci_rowId'),
         };
       }
     };
 
-    function showStatus(msg, ok = true) {
-      const el = document.getElementById('statusNotice');
-      el.textContent = msg;
-      el.style.color = ok ? 'var(--green)' : 'var(--red)';
-      el.style.borderColor = ok ? 'rgba(34,197,94,0.25)' : 'rgba(239,68,68,0.25)';
-      el.style.background = ok ? 'rgba(34,197,94,0.10)' : 'rgba(239,68,68,0.10)';
-      el.classList.remove('hidden');
-      setTimeout(() => el.classList.add('hidden'), 3000);
+    function storePending(p) {
+      const q = JSON.parse(localStorage.getItem('ci_pending') || '[]');
+      q.push(p);
+      localStorage.setItem('ci_pending', JSON.stringify(q));
+    }
+
+    async function flushPending() {
+      const q = JSON.parse(localStorage.getItem('ci_pending') || '[]');
+      if (!q.length) return;
+      const remaining = [];
+      for (const p of q) {
+        const ok = await sheetPost(p, true);
+        if (!ok) remaining.push(p);
+      }
+      localStorage.setItem('ci_pending', JSON.stringify(remaining));
+    }
+
+    async function sheetPost(data, skipQueue = false) {
+      const url = getSheetUrl();
+      if (!url) { if (!skipQueue) storePending(data); return null; }
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(data)
+        });
+        return { ok: true };
+      } catch(e) {
+        if (!skipQueue) { storePending(data); showSyncNotice(); }
+        return null;
+      }
+    }
+
+    async function sheetGet() {
+      const url = getSheetUrl();
+      if (!url) return null;
+      try {
+        const res = await fetch(`${url}?action=get&date=${todayKey()}`);
+        return await res.json();
+      } catch(e) { return null; }
+    }
+
+    async function sheetGetLatest() {
+      const url = getSheetUrl();
+      if (!url) return null;
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'ping' })
+        });
+        return { ok: true };
+      } catch(e) { return { ok: false }; }
     }
 
     function showSyncNotice() {
@@ -456,87 +607,96 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_iuV-GmlQ_Mb4YFxUmY
       setTimeout(() => el.classList.add('hidden'), 4000);
     }
 
-    function storePending(payload) {
-      const q = JSON.parse(localStorage.getItem('ci_pending') || '[]');
-      q.push(payload);
-      localStorage.setItem('ci_pending', JSON.stringify(q));
+    function toggleSheetsPanel() {
+      const hidden = document.getElementById('sheetsBody').classList.toggle('hidden');
+      if (hidden) document.getElementById('testResult').classList.add('hidden');
     }
 
-    async function flushPending() {
-      const q = JSON.parse(localStorage.getItem('ci_pending') || '[]');
-      if (!q.length) return;
-
-      const remaining = [];
-      for (const payload of q) {
-        const ok = await sheetPost(payload, true);
-        if (!ok) remaining.push(payload);
+    function saveSheetUrl() {
+      const val     = document.getElementById('sheetUrlInput').value.trim();
+      const errEl   = document.getElementById('urlError');
+      if (!val) {
+        errEl.textContent = 'Please paste the Apps Script URL.';
+        errEl.classList.remove('hidden'); return;
       }
-
-      localStorage.setItem('ci_pending', JSON.stringify(remaining));
-    }
-
-    async function sheetPing() {
-      try {
-        const res = await fetch(`${SHEET_URL}?action=ping`, {
-          method: 'GET'
-        });
-        return await res.json();
-      } catch (e) {
-        return { ok: false };
+      if (!val.includes('script.google.com') && !val.startsWith('http')) {
+        errEl.textContent = 'URL must start with https://script.google.com/…';
+        errEl.classList.remove('hidden'); return;
       }
+      errEl.classList.add('hidden');
+      localStorage.setItem('ci_sheet_url', val);
+      updateSheetsStatus();
+      document.getElementById('sheetsBody').classList.add('hidden');
     }
 
-    async function sheetGet() {
+    async function testSheetUrl() {
+      const val    = document.getElementById('sheetUrlInput').value.trim();
+      const result = document.getElementById('testResult');
+      if (!val) { result.textContent = 'Enter a URL first.'; result.classList.remove('hidden'); return; }
+      result.textContent = 'Testing…';
+      result.style.color = '';
+      result.classList.remove('hidden');
       try {
-        const res = await fetch(`${SHEET_URL}?action=get&date=${encodeURIComponent(todayKey())}`, {
-          method: 'GET'
-        });
-        return await res.json();
-      } catch (e) {
-        return null;
-      }
-    }
-
-    async function sheetPost(data, skipQueue = false) {
-      try {
-        await fetch(SHEET_URL, {
+        await fetch(val, {
           method: 'POST',
           mode: 'no-cors',
-          headers: {
-            'Content-Type': 'text/plain;charset=utf-8'
-          },
-          body: JSON.stringify(data)
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'ping' })
         });
-        return true;
-      } catch (e) {
-        if (!skipQueue) {
-          storePending(data);
-          showSyncNotice();
-        }
-        return false;
+        result.textContent = '✓ URL reachable — if data is not appearing in Sheets, check the Apps Script is deployed as Anyone.';
+        result.style.color = '#75b798';
+      } catch(e) {
+        result.textContent = '✗ Network error — check the URL is correct.';
+        result.style.color = 'var(--red)';
       }
     }
 
-    function showView(id) {
-      ['viewIdle', 'viewResume', 'viewActive', 'viewSummary'].forEach((v) => {
-        document.getElementById(v).classList.toggle('hidden', v !== id);
-      });
+    function updateSheetsStatus() {
+      const url      = getSheetUrl();
+      const statusEl = document.getElementById('sheetsStatus');
+      const setupEl  = document.getElementById('sheets-setup-box');
+      if (url) {
+        statusEl.textContent = 'checking…';
+        statusEl.className   = 'sheets-toggle-status';
+        if (setupEl) { setupEl.classList.remove('not-configured'); setupEl.classList.add('connected'); }
+        document.getElementById('sheetUrlInput').value = url;
+      } else {
+        statusEl.textContent = '✗ not connected — tap to set up';
+        statusEl.className   = 'sheets-toggle-status err';
+        if (setupEl) { setupEl.classList.add('not-configured'); setupEl.classList.remove('connected'); }
+        document.getElementById('sheetsBody').classList.remove('hidden');
+      }
     }
 
-    function selectType(type) {
+    function applyLatestStatus(result) {
+      const statusEl = document.getElementById('sheetsStatus');
+      if (!result || !result.ok) {
+        statusEl.textContent = '✗ unreachable';
+        statusEl.className   = 'sheets-toggle-status err';
+        document.getElementById('sheets-setup-box').classList.add('not-configured');
+      } else {
+        statusEl.textContent = '✓ connected';
+        statusEl.className   = 'sheets-toggle-status ok';
+      }
+    }
+
+    function makeRowId()      { return `${todayKey()}-${Date.now()}`; }
+    function getRowId()       { let id = localStorage.getItem('ci_rowId'); if (!id) { id = makeRowId(); localStorage.setItem('ci_rowId', id); } return id; }
+    function tsToTimeStr(ts)  { const d = new Date(ts); return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+    function weekday(ts)      { return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(ts).getDay()]; }
+    function formatDuration(ms) {
+      const s = Math.floor(ms/1000), h = Math.floor(s/3600), m = Math.floor((s%3600)/60), r = s%60;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`;
+    }
+
+function selectType(type) {
       sessionType = type;
-
-      const weights = document.getElementById('toggleWeights');
-      const cardio = document.getElementById('toggleCardio');
-
-      weights.classList.toggle('selected', type === 'weights');
-      cardio.classList.toggle('selected', type === 'cardio');
+      document.getElementById('toggleWeights').classList.toggle('selected', type === 'weights');
+      document.getElementById('toggleCardio').classList.toggle('selected',  type === 'cardio');
     }
 
     function selectChip(el) {
-      document
-        .querySelectorAll(`.chip[data-group="${el.dataset.group}"]`)
-        .forEach((c) => c.classList.remove('selected'));
+      document.querySelectorAll(`.chip[data-group="${el.dataset.group}"]`).forEach(c => c.classList.remove('selected'));
       el.classList.add('selected');
     }
 
@@ -545,72 +705,23 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_iuV-GmlQ_Mb4YFxUmY
       return el ? el.dataset.val : '';
     }
 
-    function makeRowId() {
-      return `${todayKey()}-${Date.now()}`;
-    }
-
-    function getRowId() {
-      let id = localStorage.getItem('ci_rowId');
-      if (!id) {
-        id = makeRowId();
-        localStorage.setItem('ci_rowId', id);
-      }
-      return id;
-    }
-
-    function tsToTimeStr(ts) {
-      const d = new Date(ts);
-      return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
-    }
-
-    function weekday(ts) {
-      return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][new Date(ts).getDay()];
-    }
-
-    function formatDuration(ms) {
-      const total = Math.floor(ms / 1000);
-      const h = Math.floor(total / 3600);
-      const m = Math.floor((total % 3600) / 60);
-      const s = total % 60;
-      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-    }
-
-    function resetVisualWarnings() {
-      document.getElementById('activeWarning').classList.add('hidden');
-      document.getElementById('activeTimer').classList.remove('warning-color');
-      document.getElementById('limitMsg').classList.add('hidden');
-    }
-
-    async function startSession() {
-      timer.start();
-
-      sessionType = document.getElementById('toggleWeights').classList.contains('selected')
-        ? 'weights'
-        : 'cardio';
-
-      warned = false;
-      autoStopped = false;
-      summaryEndTs = null;
-      resetVisualWarnings();
-
-      LS.save();
-
-      const rowId = getRowId();
-      await sheetPost({
-        action: 'start',
-        rowId,
-        date: todayKey(),
-        weekday: weekday(timer.startTs),
-        start: tsToTimeStr(timer.startTs),
-        type: sessionType,
-        status: 'active',
-        created_at: new Date(timer.startTs).toISOString()
+function showView(id) {
+      ['viewIdle','viewResume','viewActive','viewSummary'].forEach(v => {
+        document.getElementById(v).classList.toggle('hidden', v !== id);
       });
+    }
 
+function startSession() {
+      timer.start();
+      sessionType = document.getElementById('toggleWeights').classList.contains('selected') ? 'weights' : 'cardio';
+      warned = false; autoStopped = false;
+      LS.save();
+      const rowId = getRowId();
+      sheetPost({ action:'start', rowId, date:todayKey(), weekday:weekday(timer.startTs),
+        start:tsToTimeStr(timer.startTs), type:sessionType, status:'active',
+        created_at:new Date(timer.startTs).toISOString() });
       startHB();
-      document.getElementById('activeTypeLabel').textContent =
-        sessionType.charAt(0).toUpperCase() + sessionType.slice(1);
-
+      document.getElementById('activeTypeLabel').textContent = sessionType.charAt(0).toUpperCase() + sessionType.slice(1);
       showView('viewActive');
       runActiveLoop();
     }
@@ -619,32 +730,17 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_iuV-GmlQ_Mb4YFxUmY
       const s = LS.load();
       sessionType = s.type;
       timer.restore(s.startTs, s.pausedMs, s.pauseTs);
-
-      warned = false;
-      autoStopped = false;
-      summaryEndTs = null;
-      resetVisualWarnings();
-
-      document.getElementById('activeTypeLabel').textContent =
-        sessionType.charAt(0).toUpperCase() + sessionType.slice(1);
-
-      document.getElementById('btnPause').textContent = timer.running
-        ? 'Pause Training'
-        : 'Resume Training';
-
+      warned = false; autoStopped = false;
       startHB();
+      document.getElementById('activeTypeLabel').textContent = sessionType.charAt(0).toUpperCase() + sessionType.slice(1);
+      document.getElementById('btnPause').textContent = timer.running ? 'Pause' : 'Resume';
       showView('viewActive');
       runActiveLoop();
     }
 
     function togglePause() {
-      if (timer.running) {
-        timer.pause();
-        document.getElementById('btnPause').textContent = 'Resume Training';
-      } else {
-        timer.resume();
-        document.getElementById('btnPause').textContent = 'Pause Training';
-      }
+      if (timer.running) { timer.pause(); document.getElementById('btnPause').textContent = 'Resume'; }
+      else               { timer.resume(); document.getElementById('btnPause').textContent = 'Pause'; }
       LS.save();
     }
 
@@ -654,28 +750,24 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_iuV-GmlQ_Mb4YFxUmY
     }
 
     function activeLoop() {
-      const elapsed = timer.elapsed();
-      const timerEl = document.getElementById('activeTimer');
-      const warnEl = document.getElementById('activeWarning');
-
+      const elapsed  = timer.elapsed();
+      const timerEl  = document.getElementById('activeTimer');
+      const warnEl   = document.getElementById('activeWarning');
       timerEl.textContent = formatTime(elapsed);
-
       if (!warned && elapsed >= WARN_MS) {
         warned = true;
         timerEl.classList.add('warning-color');
         warnEl.classList.remove('hidden');
       }
-
       if (!autoStopped && elapsed >= LIMIT_MS) {
-        autoStopped = true;
-        summaryEndTs = Date.now();
-        document.getElementById('limitMsg').textContent = '2h limit reached';
+        autoStopped  = true;
+        summaryEndTs = timer.startTs + timer.pausedMs + LIMIT_MS;
+        document.getElementById('limitMsg').textContent = '2h limit reached — auto-stopped';
         document.getElementById('limitMsg').classList.remove('hidden');
         stopHB();
         showSummaryView(elapsed);
         return;
       }
-
       rafId = requestAnimationFrame(activeLoop);
     }
 
@@ -689,90 +781,62 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_iuV-GmlQ_Mb4YFxUmY
     function stopNow() {
       const s = LS.load();
       timer.restore(s.startTs, s.pausedMs, s.pauseTs);
-      sessionType = s.type;
+      sessionType  = s.type;
       summaryEndTs = Date.now();
       showSummaryView(timer.elapsed());
     }
 
     function showSummaryView(elapsed) {
-      if (rafId) cancelAnimationFrame(rafId);
-
       document.getElementById('summaryElapsed').textContent = formatTime(elapsed);
       document.getElementById('editStart').value = timer.startTs ? tsToTimeStr(timer.startTs) : '';
-      document.getElementById('editEnd').value = tsToTimeStr(summaryEndTs || Date.now());
+      document.getElementById('editEnd').value   = tsToTimeStr(summaryEndTs || Date.now());
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
       document.getElementById('commentInput').value = '';
-
-      document.querySelectorAll('.chip').forEach((c) => c.classList.remove('selected'));
-
       showView('viewSummary');
     }
 
     async function saveSession() {
       const elapsed = timer.elapsed();
-
       const payload = {
-        action: 'stop',
-        rowId: getRowId(),
-        date: todayKey(),
-        weekday: weekday(timer.startTs),
-        start: document.getElementById('editStart').value,
-        end: document.getElementById('editEnd').value,
-        duration: formatDuration(elapsed),
-        type: sessionType,
-        mood: getChipVal('mood'),
-        last_food: getChipVal('food'),
-        comment: document.getElementById('commentInput').value.trim(),
-        status: 'done',
-        heartbeat_elapsed: Math.floor(elapsed / 1000),
-        created_at: new Date(timer.startTs).toISOString(),
-        updated_at: new Date().toISOString()
+        action:'stop', rowId:getRowId(), date:todayKey(), weekday:weekday(timer.startTs),
+        start:document.getElementById('editStart').value,
+        end:document.getElementById('editEnd').value,
+        duration:formatDuration(elapsed), type:sessionType,
+        mood:getChipVal('mood'), last_food:getChipVal('food'),
+        comment:document.getElementById('commentInput').value.trim(),
+        status:'done', heartbeat_elapsed:Math.floor(elapsed/1000),
+        created_at:new Date(timer.startTs).toISOString(),
+        updated_at:new Date().toISOString()
       };
 
+      if (!getSheetUrl()) {
+        storePending(payload);
+        if (!confirm('Google Sheets is not connected.\n\nSession saved locally and will sync when you set up Sheets.\n\nContinue?')) return;
+        LS.clear(); window.location.href = 'index.html'; return;
+      }
+
       await sheetPost(payload);
-      LS.clear();
-      window.location.href = 'index.html';
+      LS.clear(); window.location.href = 'index.html';
     }
 
     async function discardSummary() {
-      await sheetPost({
-        action: 'discard',
-        rowId: getRowId(),
-        status: 'cancelled',
-        updated_at: new Date().toISOString()
-      });
-
-      LS.clear();
-      resetToIdle();
+      await sheetPost({ action:'discard', rowId:getRowId(), status:'cancelled', updated_at:new Date().toISOString() });
+      LS.clear(); resetToIdle();
     }
 
     async function discardSession() {
       const s = LS.load();
-
-      if (s.rowId) {
-        await sheetPost({
-          action: 'discard',
-          rowId: s.rowId,
-          status: 'cancelled',
-          updated_at: new Date().toISOString()
-        });
-      }
-
-      LS.clear();
-      resetToIdle();
+      if (s.rowId) await sheetPost({ action:'discard', rowId:s.rowId, status:'cancelled', updated_at:new Date().toISOString() });
+      LS.clear(); resetToIdle();
     }
 
     function resetToIdle() {
       if (rafId) cancelAnimationFrame(rafId);
       stopHB();
-
-      timer = new LiveTimer();
-      warned = false;
-      autoStopped = false;
-      summaryEndTs = null;
-
-      resetVisualWarnings();
-      document.getElementById('btnPause').textContent = 'Pause Training';
-
+      timer = new LiveTimer(); warned = false; autoStopped = false; summaryEndTs = null;
+      document.getElementById('activeWarning').classList.add('hidden');
+      document.getElementById('activeTimer').classList.remove('warning-color');
+      document.getElementById('limitMsg').classList.add('hidden');
       showView('viewIdle');
     }
 
@@ -780,66 +844,38 @@ const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_iuV-GmlQ_Mb4YFxUmY
       stopHB();
       hbTimer = setInterval(() => {
         LS.save();
-        sheetPost({
-          action: 'heartbeat',
-          rowId: getRowId(),
-          heartbeat_elapsed: Math.floor(timer.elapsed() / 1000),
-          updated_at: new Date().toISOString()
-        });
+        sheetPost({ action:'heartbeat', rowId:getRowId(),
+          heartbeat_elapsed:Math.floor(timer.elapsed()/1000), updated_at:new Date().toISOString() });
       }, HB_INTERVAL);
     }
 
-    function stopHB() {
-      if (hbTimer) {
-        clearInterval(hbTimer);
-        hbTimer = null;
-      }
-    }
+    function stopHB() { if (hbTimer) { clearInterval(hbTimer); hbTimer = null; } }
 
     async function init() {
-      const ping = await sheetPing();
-      if (ping && ping.ok) {
-        showStatus('Google Sheets connected', true);
-      } else {
-        showStatus('Google Sheets unreachable', false);
-      }
-
+      updateSheetsStatus();
+      if (getSheetUrl()) sheetGetLatest().then(applyLatestStatus);
       await flushPending();
 
       const s = LS.load();
       if (s.status === 'active' && s.startTs) {
-        const started = new Date(s.startTs);
-        const now = new Date();
-
-        const sameDay =
-          started.getFullYear() === now.getFullYear() &&
-          started.getMonth() === now.getMonth() &&
-          started.getDate() === now.getDate();
-
+        const d = new Date(s.startTs), t = new Date();
+        const sameDay = d.getFullYear()===t.getFullYear() && d.getMonth()===t.getMonth() && d.getDate()===t.getDate();
         if (sameDay) {
-          const elapsed = s.pauseTs
-            ? s.pauseTs - s.startTs - s.pausedMs
-            : Date.now() - s.startTs - s.pausedMs;
-
+          const elapsed = s.pauseTs ? s.pauseTs - s.startTs - s.pausedMs : Date.now() - s.startTs - s.pausedMs;
           document.getElementById('resumeMeta').textContent =
             `${s.type} · ${formatTime(elapsed)} elapsed · started ${tsToTimeStr(s.startTs)}`;
+          sessionType = s.type; selectType(s.type);
+          showView('viewResume'); return;
+        } else { LS.clear(); }
+      }
 
-          sessionType = s.type;
-          selectType(s.type);
+      sheetGet().then(data => {
+        if (data && data.status === 'active' && !LS.load().startTs) {
+          document.getElementById('resumeMeta').textContent =
+            `${data.type||'weights'} · started ${data.start} (cloud)`;
           showView('viewResume');
-          return;
         }
-
-        LS.clear();
-      }
-
-      const cloud = await sheetGet();
-      if (cloud && cloud.status === 'active') {
-        document.getElementById('resumeMeta').textContent =
-          `${cloud.type || 'weights'} · started ${cloud.start}`;
-        showView('viewResume');
-        return;
-      }
+      });
 
       showView('viewIdle');
     }
