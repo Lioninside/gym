@@ -10,6 +10,7 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
+      height: 100dvh;
       padding: 16px;
       overflow: hidden;
     }
@@ -790,11 +791,11 @@ function json(d) {
         // No Sheets URL — save locally and warn
         storePending(payload);
         if (!confirm('Google Sheets is not connected.\n\nSession saved locally and will sync when you set up Sheets.\n\nContinue?')) return;
-        LS.clear(); resetToIdle(); return;
+        LS.clear(); window.location.href = 'index.html'; return;
       }
 
       await sheetPost(payload);
-      LS.clear(); resetToIdle();
+      LS.clear(); window.location.href = 'index.html';
     }
 
     async function discardSummary() {

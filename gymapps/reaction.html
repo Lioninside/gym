@@ -10,6 +10,7 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
+      height: 100dvh;
       padding: 16px;
       overflow: hidden;
     }
@@ -19,19 +20,34 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 28px;
+      gap: 20px;
     }
 
     .interval-section {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
     }
 
     .slider-row {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 10px;
+    }
+
+    /* Bigger touch target for sliders in reaction */
+    .interval-section input[type=range] {
+      height: 10px;
+    }
+
+    .interval-section input[type=range]::-webkit-slider-thumb {
+      width: 34px;
+      height: 34px;
+    }
+
+    .interval-section input[type=range]::-moz-range-thumb {
+      width: 34px;
+      height: 34px;
     }
 
     .slider-header {
