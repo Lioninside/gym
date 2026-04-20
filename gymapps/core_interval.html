@@ -379,12 +379,15 @@
       const list = document.getElementById('exerciseList');
       list.innerHTML = '';
       exercises.forEach(ex => {
-        const row = document.createElement('div');
+        const row  = document.createElement('div');
         row.className = 'ex-row';
-        row.innerHTML = `
-          <span class="ex-name">${ex.name}</span>
-          <span class="ex-dur">${ex.duration}s</span>
-        `;
+        const name = document.createElement('span');
+        name.className = 'ex-name';
+        name.textContent = ex.name;
+        const dur  = document.createElement('span');
+        dur.className = 'ex-dur';
+        dur.textContent = `${ex.duration}s`;
+        row.append(name, dur);
         list.appendChild(row);
       });
     }
@@ -405,15 +408,33 @@
       editDraft.forEach((ex, i) => {
         const row = document.createElement('div');
         row.className = 'edit-row';
-        row.innerHTML = `
-          <input class="edit-name-input" type="text" value="${ex.name}" data-i="${i}" placeholder="Exercise name">
-          <div class="edit-field-group">
-            <span class="edit-dur-label">sec</span>
-            <input class="edit-dur-input" type="number" value="${ex.duration}" min="5" max="300" data-i="${i}">
-          </div>
-          <button class="edit-move-btn" data-dir="up" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
-          <button class="edit-move-btn" data-dir="dn" data-i="${i}" ${i === editDraft.length - 1 ? 'disabled' : ''}>↓</button>
-        `;
+
+        const nameIn = document.createElement('input');
+        nameIn.className = 'edit-name-input'; nameIn.type = 'text';
+        nameIn.placeholder = 'Exercise name'; nameIn.dataset.i = i;
+        nameIn.value = ex.name;
+
+        const group = document.createElement('div');
+        group.className = 'edit-field-group';
+        const lbl = document.createElement('span');
+        lbl.className = 'edit-dur-label'; lbl.textContent = 'sec';
+        const durIn = document.createElement('input');
+        durIn.className = 'edit-dur-input'; durIn.type = 'number';
+        durIn.min = '5'; durIn.max = '300'; durIn.dataset.i = i;
+        durIn.value = ex.duration;
+        group.append(lbl, durIn);
+
+        const upBtn = document.createElement('button');
+        upBtn.className = 'edit-move-btn'; upBtn.dataset.dir = 'up';
+        upBtn.dataset.i = i; upBtn.textContent = '↑';
+        if (i === 0) upBtn.disabled = true;
+
+        const dnBtn = document.createElement('button');
+        dnBtn.className = 'edit-move-btn'; dnBtn.dataset.dir = 'dn';
+        dnBtn.dataset.i = i; dnBtn.textContent = '↓';
+        if (i === editDraft.length - 1) dnBtn.disabled = true;
+
+        row.append(nameIn, group, upBtn, dnBtn);
         list.appendChild(row);
       });
 
@@ -520,8 +541,8 @@
     }
 
     function scheduleLoop() {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(loop);
+      if (rafId) clearTimeout(rafId);
+      rafId = setTimeout(loop, 250);
     }
 
     function loop() {
@@ -532,7 +553,7 @@
         const remaining = COUNTIN_DURATION - Math.floor(elapsed / 1000);
         countdownDisp.textContent = Math.max(0, remaining);
         if (elapsed >= COUNTIN_DURATION * 1000) { enterPhase(0); return; }
-        rafId = requestAnimationFrame(loop);
+        rafId = setTimeout(loop, 250);
         return;
       }
 
@@ -559,16 +580,16 @@
         return;
       }
 
-      rafId = requestAnimationFrame(loop);
+      rafId = setTimeout(loop, 250);
     }
 
     function showDone() {
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafId) clearTimeout(rafId);
       showView('viewDone');
     }
 
     function abortWorkout() {
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafId) clearTimeout(rafId);
       showView('viewIdle');
     }
 

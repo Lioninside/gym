@@ -153,7 +153,7 @@
 
     function pressTimer(id) {
       const t = timers[id];
-      if (t.rafId) cancelAnimationFrame(t.rafId);
+      if (t.rafId) clearTimeout(t.rafId);
       t.startTs = Date.now();
       t.durSec  = parseInt(slider.value);
       t.beeped  = false;
@@ -184,7 +184,7 @@
         }
       }
 
-      t.rafId = requestAnimationFrame(() => tickTimer(id));
+      t.rafId = setTimeout(() => tickTimer(id), 250);
     }
 
     function mmss(totalSec) {

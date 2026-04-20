@@ -330,7 +330,7 @@ hier ist der Code:
         <div class="sheets-body hidden" id="sheetsBody">
           <div class="setup-steps">
             <ol>
-              <li>Go to <a href="https://script.google.com" target="_blank">script.google.com</a> → New project</li>
+              <li>Go to <a href="https://script.google.com" target="_blank" rel="noopener noreferrer">script.google.com</a> → New project</li>
               <li>Paste the Apps Script code below, save</li>
               <li>Deploy → New deployment → Web app<br>Execute as: <strong>Me</strong> · Access: <strong>Anyone</strong></li>
               <li>Copy the deployment URL and paste it here</li>
@@ -436,7 +436,7 @@ function json(d) {
     <div id="viewResume" class="hidden">
       <div class="resume-title">Active session found</div>
       <div class="resume-meta" id="resumeMeta"></div>
-      <button class="btn-success"   onclick="resumeSession()">Resume</button>
+      <button class="btn-success" id="btnResume" onclick="resumeSession()">Resume</button>
       <button class="btn-secondary" onclick="stopNow()">Stop now</button>
       <button class="btn-danger"    onclick="discardSession()">Discard</button>
     </div>
@@ -545,8 +545,10 @@ function json(d) {
     };
 
     function storePending(p) {
-      const q = JSON.parse(localStorage.getItem('ci_pending') || '[]');
+      let q = JSON.parse(localStorage.getItem('ci_pending') || '[]');
+      q = q.filter(x => !(x.rowId === p.rowId && x.action === p.action));
       q.push(p);
+      if (q.length > 30) q = q.slice(-30);
       localStorage.setItem('ci_pending', JSON.stringify(q));
     }
 
@@ -619,8 +621,11 @@ function json(d) {
         errEl.textContent = 'Please paste the Apps Script URL.';
         errEl.classList.remove('hidden'); return;
       }
-      if (!val.includes('script.google.com') && !val.startsWith('http')) {
-        errEl.textContent = 'URL must start with https://script.google.com/…';
+      try {
+        const u = new URL(val);
+        if (!u.hostname.endsWith('script.google.com') && !u.hostname.endsWith('script.googleusercontent.com')) throw new Error();
+      } catch {
+        errEl.textContent = 'Must be a script.google.com URL.';
         errEl.classList.remove('hidden'); return;
       }
       errEl.classList.add('hidden');
@@ -658,7 +663,7 @@ function json(d) {
       if (url) {
         statusEl.textContent = 'checking…';
         statusEl.className   = 'sheets-toggle-status';
-        if (setupEl) { setupEl.classList.remove('not-configured'); setupEl.classList.add('connected'); }
+        if (setupEl) { setupEl.classList.remove('not-configured', 'connected'); }
         document.getElementById('sheetUrlInput').value = url;
       } else {
         statusEl.textContent = '✗ not connected — tap to set up';
@@ -670,13 +675,17 @@ function json(d) {
 
     function applyLatestStatus(result) {
       const statusEl = document.getElementById('sheetsStatus');
+      const setupEl  = document.getElementById('sheets-setup-box');
       if (!result || !result.ok) {
         statusEl.textContent = '✗ unreachable';
         statusEl.className   = 'sheets-toggle-status err';
-        document.getElementById('sheets-setup-box').classList.add('not-configured');
+        setupEl.classList.add('not-configured');
+        setupEl.classList.remove('connected');
       } else {
-        statusEl.textContent = '✓ connected';
+        statusEl.textContent = '✓ reachable';
         statusEl.className   = 'sheets-toggle-status ok';
+        setupEl.classList.add('connected');
+        setupEl.classList.remove('not-configured');
       }
     }
 
@@ -745,8 +754,8 @@ function startSession() {
     }
 
     function runActiveLoop() {
-      if (rafId) cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(activeLoop);
+      if (rafId) clearTimeout(rafId);
+      activeLoop();
     }
 
     function activeLoop() {
@@ -768,17 +777,18 @@ function startSession() {
         showSummaryView(elapsed);
         return;
       }
-      rafId = requestAnimationFrame(activeLoop);
+      rafId = setTimeout(activeLoop, 250);
     }
 
     function stopSession() {
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafId) clearTimeout(rafId);
       stopHB();
       summaryEndTs = Date.now();
       showSummaryView(timer.elapsed());
     }
 
     function stopNow() {
+      if (rafId) { clearTimeout(rafId); rafId = null; }
       const s = LS.load();
       timer.restore(s.startTs, s.pausedMs, s.pauseTs);
       sessionType  = s.type;
@@ -831,7 +841,7 @@ function startSession() {
     }
 
     function resetToIdle() {
-      if (rafId) cancelAnimationFrame(rafId);
+      if (rafId) clearTimeout(rafId);
       stopHB();
       timer = new LiveTimer(); warned = false; autoStopped = false; summaryEndTs = null;
       document.getElementById('activeWarning').classList.add('hidden');
@@ -872,7 +882,8 @@ function startSession() {
       sheetGet().then(data => {
         if (data && data.status === 'active' && !LS.load().startTs) {
           document.getElementById('resumeMeta').textContent =
-            `${data.type||'weights'} · started ${data.start} (cloud)`;
+            `${data.type||'weights'} · started ${data.start} (cloud — no local state)`;
+          document.getElementById('btnResume').disabled = true;
           showView('viewResume');
         }
       });
