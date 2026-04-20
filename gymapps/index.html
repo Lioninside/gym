@@ -16,25 +16,20 @@
 
     .index-header {
       flex-shrink: 0;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .index-title {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 2.2rem;
-      color: var(--text);
+      font-size: 2rem;
+      font-weight: 700;
       line-height: 1;
       margin-bottom: 4px;
     }
 
     .index-subtitle {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--violet);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--muted);
     }
 
     .index-nav {
@@ -47,16 +42,16 @@
 
     .nav-item {
       display: block;
-      background: var(--card);
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 14px 18px;
+      border-radius: 12px;
+      padding: 16px 18px;
       text-decoration: none;
       color: var(--text);
-      transition: opacity 0.1s;
+      transition: filter 0.1s;
     }
 
-    .nav-item:active { opacity: 0.7; }
+    .nav-item:active { filter: brightness(0.8); }
 
     .nav-item-row {
       display: flex;
@@ -65,32 +60,27 @@
     }
 
     .nav-item-name {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
+      font-weight: 700;
     }
 
     .nav-item-arrow {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      color: var(--muted);
       font-size: 1rem;
+      color: var(--muted);
+      font-weight: 500;
     }
 
     .nav-item-desc {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 0.82rem;
+      font-weight: 400;
       color: var(--muted);
-      margin-top: 3px;
+      margin-top: 2px;
     }
 
-    .nav-item.green .nav-item-name  { color: var(--green); }
-    .nav-item.violet .nav-item-name { color: var(--violet); }
-    .nav-item.pink .nav-item-name   { color: var(--pink); }
-    .nav-item.amber .nav-item-name  { color: var(--amber); }
+    .nav-item.green  .nav-item-name { color: #75b798; }
+    .nav-item.blue   .nav-item-name { color: #6ea8fe; }
+    .nav-item.pink   .nav-item-name { color: #f78fb3; }
+    .nav-item.amber  .nav-item-name { color: var(--amber); }
 
     .index-footer {
       flex-shrink: 0;
@@ -99,28 +89,21 @@
     }
 
     .footer-brand {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
+      font-size: 0.75rem;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.08em;
       color: var(--muted);
       margin-bottom: 3px;
     }
 
     .footer-text {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.65rem;
+      font-size: 0.78rem;
       color: var(--muted);
-      opacity: 0.6;
       line-height: 1.5;
     }
 
-    .footer-text a {
-      color: var(--violet);
-      text-decoration: none;
-    }
+    .footer-text a { color: #6ea8fe; text-decoration: none; }
   </style>
 </head>
 <body>
@@ -140,7 +123,7 @@
         <div class="nav-item-desc">Track training sessions</div>
       </a>
 
-      <a class="nav-item violet" href="timer.html">
+      <a class="nav-item blue" href="timer.html">
         <div class="nav-item-row">
           <span class="nav-item-name">Timer</span>
           <span class="nav-item-arrow">→</span>

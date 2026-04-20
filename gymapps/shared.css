@@ -1,16 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap');
 
 :root {
-  --bg:     #0b0b2e;
-  --card:   #16165a;
-  --border: #2a2a7a;
-  --text:   #e8e8ff;
-  --muted:  #7878c0;
-  --pink:   #e91e8c;
-  --violet: #6c63f5;
-  --green:  #22c55e;
-  --amber:  #f59e0b;
-  --red:    #ef4444;
+  --bg:      #0f0f14;
+  --surface: #1a1a22;
+  --border:  #2e2e3c;
+  --text:    #f2f2f5;
+  --muted:   #8888a0;
+  --green:   #198754;
+  --blue:    #0d6efd;
+  --red:     #dc3545;
+  --amber:   #ffc107;
+  --violet:  #6c63f5;
+  --pink:    #e91e8c;
 }
 
 *, *::before, *::after {
@@ -28,11 +29,10 @@ html, body {
 
 body {
   background: var(--bg);
-  background-image:
-    radial-gradient(ellipse at 25% 0%, rgba(108,99,245,0.18) 0%, transparent 55%),
-    radial-gradient(ellipse at 75% 100%, rgba(233,30,140,0.12) 0%, transparent 55%);
   color: var(--text);
-  font-family: 'Syne', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
   max-width: 480px;
   margin: 0 auto;
 }
@@ -47,116 +47,72 @@ body {
 
 .top-bar {
   flex-shrink: 0;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
 }
 
 .top-bar a {
   color: var(--muted);
   text-decoration: none;
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-/* Buttons */
+/* ── Buttons ───────────────────────── */
 button {
   -webkit-appearance: none;
   appearance: none;
   outline: none;
   border: none;
   cursor: pointer;
-  transition: opacity 0.1s;
-  font-family: 'Syne', sans-serif;
-  font-weight: 800;
-}
-
-button:active { opacity: 0.7; }
-button:disabled { opacity: 0.35; cursor: default; }
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--violet) 0%, #4f46e5 100%);
-  color: #fff;
-  border-radius: 18px;
-  padding: 15px 20px;
+  transition: filter 0.1s;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-weight: 600;
   font-size: 1rem;
+  border-radius: 10px;
+  padding: 14px 20px;
   width: 100%;
-  box-shadow: 0 4px 18px rgba(108,99,245,0.3);
+  text-align: center;
 }
 
-.btn-pink {
-  background: linear-gradient(135deg, var(--pink) 0%, #c2185b 100%);
-  color: #fff;
-  border-radius: 18px;
-  padding: 15px 20px;
-  font-size: 1rem;
-  width: 100%;
-  box-shadow: 0 4px 18px rgba(233,30,140,0.3);
-}
+button:active  { filter: brightness(0.85); }
+button:disabled { opacity: 0.4; cursor: default; }
 
-.btn-green {
-  background: linear-gradient(135deg, var(--green) 0%, #16a34a 100%);
-  color: #fff;
-  border-radius: 18px;
-  padding: 15px 20px;
-  font-size: 1rem;
-  width: 100%;
-  box-shadow: 0 4px 18px rgba(34,197,94,0.25);
-}
-
+.btn-primary   { background: var(--blue);   color: #fff; }
+.btn-success   { background: var(--green);  color: #fff; }
+.btn-danger    { background: var(--red);    color: #fff; }
+.btn-warning   { background: var(--amber);  color: #000; }
 .btn-secondary {
-  background: var(--card);
+  background: var(--surface);
   color: var(--text);
   border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 15px 20px;
-  font-size: 1rem;
-  width: 100%;
 }
 
-.btn-danger {
-  background: rgba(239,68,68,0.12);
-  color: var(--red);
-  border: 1px solid rgba(239,68,68,0.25);
-  border-radius: 18px;
-  padding: 15px 20px;
-  font-size: 1rem;
-  width: 100%;
-}
-
-.btn-amber {
-  background: rgba(245,158,11,0.15);
-  color: var(--amber);
-  border: 1px solid rgba(245,158,11,0.3);
-  border-radius: 18px;
-  padding: 15px 20px;
-  font-size: 1rem;
-  width: 100%;
-}
+/* legacy aliases used in older pages */
+.btn-green  { background: var(--green);  color: #fff; border-radius: 10px; padding: 14px 20px; font-size: 1rem; font-weight: 600; width: 100%; }
+.btn-pink   { background: #c2185b;       color: #fff; border-radius: 10px; padding: 14px 20px; font-size: 1rem; font-weight: 600; width: 100%; }
+.btn-amber  { background: var(--amber);  color: #000; border-radius: 10px; padding: 14px 20px; font-size: 1rem; font-weight: 600; width: 100%; }
 
 .btn-sm {
-  padding: 7px 14px;
-  font-size: 0.75rem;
-  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  border-radius: 8px;
   width: auto;
 }
 
-/* Card */
+/* ── Card ──────────────────────────── */
 .card {
-  background: var(--card);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 18px;
+  border-radius: 12px;
   padding: 16px;
 }
 
-/* Labels */
+/* ── Typography helpers ────────────── */
 .label {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 0.68rem;
-  letter-spacing: 0.12em;
+  font-size: 0.78rem;
+  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.06em;
   color: var(--muted);
 }
 
@@ -165,16 +121,16 @@ button:disabled { opacity: 0.35; cursor: default; }
   font-weight: 500;
 }
 
-.muted { color: var(--muted); }
+.muted       { color: var(--muted); }
 .text-center { text-align: center; }
-.hidden { display: none !important; }
+.hidden      { display: none !important; }
 
-/* Range input */
+/* ── Range input ───────────────────── */
 input[type=range] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 5px;
+  height: 6px;
   background: var(--border);
   border-radius: 3px;
   outline: none;
@@ -184,40 +140,38 @@ input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 22px;
   height: 22px;
-  background: var(--violet);
+  background: var(--blue);
   border-radius: 50%;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(108,99,245,0.5);
 }
 
 input[type=range]::-moz-range-thumb {
   width: 22px;
   height: 22px;
-  background: var(--violet);
+  background: var(--blue);
   border-radius: 50%;
   cursor: pointer;
   border: none;
 }
 
-/* Text input */
+/* ── Text inputs ───────────────────── */
 input[type=text], input[type=time], textarea {
-  background: var(--card);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 10px;
   color: var(--text);
-  font-family: 'Syne', sans-serif;
-  font-weight: 700;
-  font-size: 0.95rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
   padding: 10px 14px;
   width: 100%;
   outline: none;
 }
 
 input[type=text]:focus, input[type=time]:focus, textarea:focus {
-  border-color: var(--violet);
+  border-color: var(--blue);
 }
 
 textarea {
   resize: none;
-  font-weight: 400;
 }
