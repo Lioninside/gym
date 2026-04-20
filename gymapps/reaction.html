@@ -43,11 +43,13 @@
     .interval-section input[type=range]::-webkit-slider-thumb {
       width: 34px;
       height: 34px;
+      background: var(--amber);
     }
 
     .interval-section input[type=range]::-moz-range-thumb {
       width: 34px;
       height: 34px;
+      background: var(--amber);
     }
 
     .slider-header {
@@ -74,7 +76,7 @@
       font-weight: 500;
       font-size: 5rem;
       line-height: 1;
-      color: var(--text);
+      color: var(--amber);
     }
 
     .state-label {
@@ -83,9 +85,10 @@
       font-size: 0.8rem;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--violet);
+      color: var(--amber);
       min-height: 1.2em;
     }
+
 
     .btn-row {
       display: flex;
@@ -131,8 +134,8 @@
     </div>
 
     <div class="btn-row">
-      <button class="btn-primary hidden" id="btnStop" onclick="stopReaction()">Stop</button>
-      <button class="btn-primary" id="btnStart" onclick="startReaction()">Start</button>
+      <button class="btn-warning hidden" id="btnStop" onclick="stopReaction()">Stop</button>
+      <button class="btn-warning" id="btnStart" onclick="startReaction()">Start</button>
     </div>
 
   </div>
