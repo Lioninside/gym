@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Gymapps</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .index-page {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 20px 16px 16px;
+      overflow: hidden;
+    }
+
+    .index-header {
+      flex-shrink: 0;
+      margin-bottom: 20px;
+    }
+
+    .index-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2.2rem;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .index-subtitle {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--violet);
+    }
+
+    .index-nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .nav-item {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 18px;
+      text-decoration: none;
+      color: var(--text);
+      transition: opacity 0.1s;
+    }
+
+    .nav-item:active { opacity: 0.7; }
+
+    .nav-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-item-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+
+    .nav-item-arrow {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    .nav-item-desc {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .nav-item.green .nav-item-name  { color: var(--green); }
+    .nav-item.violet .nav-item-name { color: var(--violet); }
+    .nav-item.pink .nav-item-name   { color: var(--pink); }
+    .nav-item.amber .nav-item-name  { color: var(--amber); }
+
+    .index-footer {
+      flex-shrink: 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3px;
+    }
+
+    .footer-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.65rem;
+      color: var(--muted);
+      opacity: 0.6;
+      line-height: 1.5;
+    }
+
+    .footer-text a {
+      color: var(--violet);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="index-page">
+
+    <header class="index-header">
+      <div class="index-title">Gymapps</div>
+      <div class="index-subtitle">by Lioninside</div>
+    </header>
+
+    <nav class="index-nav">
+      <a class="nav-item green" href="checkin.html">
+        <div class="nav-item-row">
+          <span class="nav-item-name">Check-in</span>
+          <span class="nav-item-arrow">→</span>
+        </div>
+        <div class="nav-item-desc">Track training sessions</div>
+      </a>
+
+      <a class="nav-item violet" href="timer.html">
+        <div class="nav-item-row">
+          <span class="nav-item-name">Timer</span>
+          <span class="nav-item-arrow">→</span>
+        </div>
+        <div class="nav-item-desc">Countdown for sets and holds</div>
+      </a>
+
+      <a class="nav-item pink" href="core_interval.html">
+        <div class="nav-item-row">
+          <span class="nav-item-name">Core Interval</span>
+          <span class="nav-item-arrow">→</span>
+        </div>
+        <div class="nav-item-desc">Guided 3-lap core circuit</div>
+      </a>
+
+      <a class="nav-item amber" href="reaction.html">
+        <div class="nav-item-row">
+          <span class="nav-item-name">Reaction</span>
+          <span class="nav-item-arrow">→</span>
+        </div>
+        <div class="nav-item-desc">Random beep trigger</div>
+      </a>
+    </nav>
+
+    <footer class="index-footer">
+      <div class="footer-brand">Lioninside</div>
+      <div class="footer-text">
+        By Clemens. Gym apps, built to spec. My spec.<br>
+        <a href="https://lioninside.com/myprojects/workout-timer-gym-tools-einfache-tools-fuers-training-ohne-app/" target="_blank">lioninside.com</a>
+        &nbsp;·&nbsp;
+        <a href="https://github.com/Lioninside/gym" target="_blank">GitHub →</a>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>

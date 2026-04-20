@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@500&display=swap');
+
+:root {
+  --bg:     #0b0b2e;
+  --card:   #16165a;
+  --border: #2a2a7a;
+  --text:   #e8e8ff;
+  --muted:  #7878c0;
+  --pink:   #e91e8c;
+  --violet: #6c63f5;
+  --green:  #22c55e;
+  --amber:  #f59e0b;
+  --red:    #ef4444;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse at 25% 0%, rgba(108,99,245,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 75% 100%, rgba(233,30,140,0.12) 0%, transparent 55%);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.top-bar {
+  flex-shrink: 0;
+  padding-bottom: 8px;
+}
+
+.top-bar a {
+  color: var(--muted);
+  text-decoration: none;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* Buttons */
+button {
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.1s;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+}
+
+button:active { opacity: 0.7; }
+button:disabled { opacity: 0.35; cursor: default; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--violet) 0%, #4f46e5 100%);
+  color: #fff;
+  border-radius: 18px;
+  padding: 15px 20px;
+  font-size: 1rem;
+  width: 100%;
+  box-shadow: 0 4px 18px rgba(108,99,245,0.3);
+}
+
+.btn-pink {
+  background: linear-gradient(135deg, var(--pink) 0%, #c2185b 100%);
+  color: #fff;
+  border-radius: 18px;
+  padding: 15px 20px;
+  font-size: 1rem;
+  width: 100%;
+  box-shadow: 0 4px 18px rgba(233,30,140,0.3);
+}
+
+.btn-green {
+  background: linear-gradient(135deg, var(--green) 0%, #16a34a 100%);
+  color: #fff;
+  border-radius: 18px;
+  padding: 15px 20px;
+  font-size: 1rem;
+  width: 100%;
+  box-shadow: 0 4px 18px rgba(34,197,94,0.25);
+}
+
+.btn-secondary {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 15px 20px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.btn-danger {
+  background: rgba(239,68,68,0.12);
+  color: var(--red);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 18px;
+  padding: 15px 20px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.btn-amber {
+  background: rgba(245,158,11,0.15);
+  color: var(--amber);
+  border: 1px solid rgba(245,158,11,0.3);
+  border-radius: 18px;
+  padding: 15px 20px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.btn-sm {
+  padding: 7px 14px;
+  font-size: 0.75rem;
+  border-radius: 10px;
+  width: auto;
+}
+
+/* Card */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+/* Labels */
+.label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mono {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+}
+
+.muted { color: var(--muted); }
+.text-center { text-align: center; }
+.hidden { display: none !important; }
+
+/* Range input */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  background: var(--violet);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(108,99,245,0.5);
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: var(--violet);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/* Text input */
+input[type=text], input[type=time], textarea {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 10px 14px;
+  width: 100%;
+  outline: none;
+}
+
+input[type=text]:focus, input[type=time]:focus, textarea:focus {
+  border-color: var(--violet);
+}
+
+textarea {
+  resize: none;
+  font-weight: 400;
+}

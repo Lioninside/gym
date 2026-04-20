@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Reaction</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .reaction-page {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .reaction-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .interval-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .counter-display {
+      text-align: center;
+    }
+
+    .counter-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .counter-value {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      font-size: 5rem;
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .state-label {
+      text-align: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--violet);
+      min-height: 1.2em;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+      padding-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="reaction-page">
+
+    <div class="top-bar">
+      <a href="index.html">← back</a>
+    </div>
+
+    <div class="reaction-center">
+
+      <div class="counter-display">
+        <div class="counter-label">Beeps</div>
+        <div class="counter-value" id="counterDisp">0</div>
+        <div class="state-label" id="stateLabel"></div>
+      </div>
+
+      <div class="interval-section" id="intervalSection">
+        <div class="slider-row">
+          <div class="slider-header">
+            <span class="label">Min interval</span>
+            <span class="label mono" id="minDisp">2s</span>
+          </div>
+          <input type="range" id="minSlider" min="1" max="30" step="1" value="2">
+        </div>
+        <div class="slider-row">
+          <div class="slider-header">
+            <span class="label">Max interval</span>
+            <span class="label mono" id="maxDisp">5s</span>
+          </div>
+          <input type="range" id="maxSlider" min="1" max="60" step="1" value="5">
+        </div>
+      </div>
+
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary hidden" id="btnStop" onclick="stopReaction()">Stop</button>
+      <button class="btn-primary" id="btnStart" onclick="startReaction()">Start</button>
+    </div>
+
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    const minSlider  = document.getElementById('minSlider');
+    const maxSlider  = document.getElementById('maxSlider');
+    const minDisp    = document.getElementById('minDisp');
+    const maxDisp    = document.getElementById('maxDisp');
+    const counterDisp = document.getElementById('counterDisp');
+    const stateLabel = document.getElementById('stateLabel');
+    const btnStart   = document.getElementById('btnStart');
+    const btnStop    = document.getElementById('btnStop');
+    const intervalSection = document.getElementById('intervalSection');
+
+    let count    = 0;
+    let timeoutId = null;
+    let running  = false;
+
+    minSlider.addEventListener('input', () => {
+      let v = parseInt(minSlider.value);
+      if (v >= parseInt(maxSlider.value)) {
+        maxSlider.value = v + 1;
+        maxDisp.textContent = `${v + 1}s`;
+      }
+      minDisp.textContent = `${v}s`;
+    });
+
+    maxSlider.addEventListener('input', () => {
+      let v = parseInt(maxSlider.value);
+      if (v <= parseInt(minSlider.value)) {
+        minSlider.value = v - 1;
+        minDisp.textContent = `${v - 1}s`;
+      }
+      maxDisp.textContent = `${v}s`;
+    });
+
+    function startReaction() {
+      count   = 0;
+      running = true;
+      counterDisp.textContent = '0';
+      stateLabel.textContent  = 'Running';
+      btnStart.classList.add('hidden');
+      btnStop.classList.remove('hidden');
+      intervalSection.style.opacity = '0.3';
+      intervalSection.style.pointerEvents = 'none';
+      scheduleBeep();
+    }
+
+    function stopReaction() {
+      running = false;
+      if (timeoutId) clearTimeout(timeoutId);
+      stateLabel.textContent = '';
+      btnStop.classList.add('hidden');
+      btnStart.classList.remove('hidden');
+      intervalSection.style.opacity = '1';
+      intervalSection.style.pointerEvents = '';
+    }
+
+    function scheduleBeep() {
+      if (!running) return;
+      const min = parseInt(minSlider.value) * 1000;
+      const max = parseInt(maxSlider.value) * 1000;
+      const delay = min + Math.random() * (max - min);
+      timeoutId = setTimeout(() => {
+        if (!running) return;
+        beep(1046, 0.1, 0.85);
+        count++;
+        counterDisp.textContent = count;
+        scheduleBeep();
+      }, delay);
+    }
+  </script>
+</body>
+</html>

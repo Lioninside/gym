@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Timer</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .timer-page {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 16px;
+      overflow: hidden;
+      gap: 0;
+    }
+
+    .timer-config {
+      flex-shrink: 0;
+    }
+
+    .duration-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .duration-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .duration-value {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .presets {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .preset-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      font-size: 0.82rem;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+
+    .preset-btn.active {
+      background: var(--violet);
+      border-color: var(--violet);
+      color: #fff;
+    }
+
+    .preset-btn:active { opacity: 0.7; }
+    .preset-btn:disabled { opacity: 0.35; cursor: default; }
+
+    .timer-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-display {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      font-size: 5.5rem;
+      color: var(--text);
+      line-height: 1;
+      text-align: center;
+      letter-spacing: -0.02em;
+      transition: color 0.3s;
+    }
+
+    .timer-display.negative {
+      color: var(--amber);
+    }
+
+    .timer-display.done {
+      color: var(--green);
+    }
+
+    .timer-status {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 10px;
+      min-height: 1.2em;
+    }
+
+    .btn-row {
+      flex-shrink: 0;
+      display: flex;
+      gap: 10px;
+      padding-top: 10px;
+    }
+
+    .btn-row .btn-primary {
+      font-size: 1.8rem;
+      padding: 20px;
+      letter-spacing: 0.05em;
+    }
+  </style>
+</head>
+<body>
+  <div class="timer-page">
+
+    <div class="top-bar">
+      <a href="index.html">← back</a>
+    </div>
+
+    <div class="timer-config" id="timerConfig">
+      <div class="duration-row">
+        <span class="duration-label">Duration</span>
+        <span class="duration-value mono" id="sliderDisplay">2:45</span>
+      </div>
+      <input type="range" id="durationSlider" min="30" max="300" step="5" value="165">
+      <div class="presets">
+        <button class="preset-btn" data-sec="60">1:00</button>
+        <button class="preset-btn" data-sec="90">1:30</button>
+        <button class="preset-btn" data-sec="120">2:00</button>
+        <button class="preset-btn active" data-sec="165">2:45</button>
+        <button class="preset-btn" data-sec="180">3:00</button>
+        <button class="preset-btn" data-sec="240">4:00</button>
+      </div>
+    </div>
+
+    <div class="timer-center">
+      <div class="timer-display" id="timerDisplay">2:45</div>
+      <div class="timer-status" id="timerStatus"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="btnA" onclick="pressBtn()">A</button>
+      <button class="btn-primary" id="btnB" onclick="pressBtn()">B</button>
+    </div>
+
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    const slider      = document.getElementById('durationSlider');
+    const sliderDisp  = document.getElementById('sliderDisplay');
+    const timerDisp   = document.getElementById('timerDisplay');
+    const timerStatus = document.getElementById('timerStatus');
+    const timerConfig = document.getElementById('timerConfig');
+    const presetBtns  = document.querySelectorAll('.preset-btn');
+
+    let durationSec = 165;
+    let startTs     = null;
+    let running     = false;
+    let beeped      = false;
+    let rafId       = null;
+
+    function secToDisplay(s) {
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return `${m}:${String(r).padStart(2,'0')}`;
+    }
+
+    function updateSliderDisplay(sec) {
+      sliderDisp.textContent = secToDisplay(sec);
+    }
+
+    slider.addEventListener('input', () => {
+      durationSec = parseInt(slider.value);
+      updateSliderDisplay(durationSec);
+      timerDisp.textContent = secToDisplay(durationSec);
+      timerDisp.className = 'timer-display';
+      updateActivePreset();
+    });
+
+    presetBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (running) return;
+        durationSec = parseInt(btn.dataset.sec);
+        slider.value = durationSec;
+        updateSliderDisplay(durationSec);
+        timerDisp.textContent = secToDisplay(durationSec);
+        timerDisp.className = 'timer-display';
+        timerStatus.textContent = '';
+        updateActivePreset();
+      });
+    });
+
+    function updateActivePreset() {
+      presetBtns.forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.sec) === durationSec);
+      });
+    }
+
+    function setConfigDisabled(disabled) {
+      slider.disabled = disabled;
+      presetBtns.forEach(b => { b.disabled = disabled; });
+      timerConfig.style.opacity = disabled ? '0.4' : '1';
+    }
+
+    function pressBtn() {
+      startTimer();
+    }
+
+    function startTimer() {
+      if (rafId) cancelAnimationFrame(rafId);
+      startTs = Date.now();
+      running = true;
+      beeped  = false;
+      setConfigDisabled(true);
+      timerStatus.textContent = 'running';
+      loop();
+    }
+
+    function loop() {
+      const elapsedMs  = Date.now() - startTs;
+      const remainMs   = durationSec * 1000 - elapsedMs;
+      const remainSec  = Math.ceil(remainMs / 1000);
+
+      if (remainMs > 0) {
+        timerDisp.textContent = secToDisplay(remainSec);
+        timerDisp.className   = 'timer-display';
+      } else {
+        if (!beeped) {
+          beeped = true;
+          beep(1046, 0.18, 0.8);
+        }
+        const negSec = Math.floor(-remainMs / 1000);
+        if (negSec === 0) {
+          timerDisp.textContent = '0:00';
+          timerDisp.className   = 'timer-display done';
+          timerStatus.textContent = 'done — counting up';
+        } else {
+          const m = Math.floor(negSec / 60);
+          const s = negSec % 60;
+          timerDisp.textContent = `-${m}:${String(s).padStart(2,'0')}`;
+          timerDisp.className   = 'timer-display negative';
+          timerStatus.textContent = 'overtime';
+        }
+      }
+
+      rafId = requestAnimationFrame(loop);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Check-in</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .ci-page {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    /* ── SYNC NOTICE ── */
+    #syncNotice {
+      background: rgba(245,158,11,0.12);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      color: var(--amber);
+      text-align: center;
+      flex-shrink: 0;
+      margin-bottom: 8px;
+    }
+
+    /* ── IDLE ── */
+    #viewIdle {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .ci-page-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .toggle-option {
+      flex: 1;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.1s;
+    }
+
+    .toggle-option.selected {
+      border-color: var(--green);
+      color: var(--green);
+      background: rgba(34,197,94,0.08);
+    }
+
+    .toggle-option:active { opacity: 0.7; }
+
+    /* ── RESUME PROMPT ── */
+    #viewResume {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .resume-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .resume-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    /* ── ACTIVE ── */
+    #viewActive {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .active-type-label {
+      flex-shrink: 0;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .active-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .active-timer {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      font-size: 5rem;
+      line-height: 1;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .active-timer.warning-color { color: var(--amber); }
+
+    .active-warning {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-top: 10px;
+      min-height: 1em;
+    }
+
+    .active-buttons {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 10px;
+    }
+
+    /* ── SUMMARY ── */
+    #viewSummary {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .summary-elapsed {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      font-size: 2.8rem;
+      line-height: 1;
+      color: var(--green);
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .time-row {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .time-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .chip-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .chip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 7px 12px;
+      cursor: pointer;
+      transition: all 0.1s;
+      letter-spacing: 0.04em;
+    }
+
+    .chip.selected {
+      background: rgba(108,99,245,0.15);
+      border-color: var(--violet);
+      color: var(--violet);
+    }
+
+    .chip:active { opacity: 0.7; }
+
+    .summary-section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .summary-comment {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .summary-comment textarea {
+      height: 52px;
+      font-size: 0.85rem;
+    }
+
+    .summary-buttons {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 4px;
+      margin-top: auto;
+    }
+
+    .limit-msg {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--amber);
+      text-align: center;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="ci-page">
+
+    <div class="top-bar">
+      <a href="index.html">← back</a>
+    </div>
+
+    <div id="syncNotice" class="hidden">Saved locally — will sync</div>
+
+    <!-- IDLE -->
+    <div id="viewIdle" class="hidden">
+      <div class="ci-page-title">Check-in</div>
+      <div>
+        <div class="label" style="margin-bottom:8px">Training type</div>
+        <div class="toggle-group">
+          <div class="toggle-option selected" id="toggleWeights" onclick="selectType('weights')">Weights</div>
+          <div class="toggle-option" id="toggleCardio" onclick="selectType('cardio')">Cardio</div>
+        </div>
+      </div>
+      <button class="btn-green" onclick="startSession()">Start Training</button>
+    </div>
+
+    <!-- RESUME PROMPT -->
+    <div id="viewResume" class="hidden">
+      <div class="resume-title">Active session found</div>
+      <div class="resume-meta" id="resumeMeta"></div>
+      <button class="btn-green" onclick="resumeSession()">Resume</button>
+      <button class="btn-secondary" onclick="stopNow()">Stop now</button>
+      <button class="btn-danger" onclick="discardSession()">Discard session</button>
+    </div>
+
+    <!-- ACTIVE -->
+    <div id="viewActive" class="hidden">
+      <div class="active-type-label" id="activeTypeLabel">Weights</div>
+      <div class="active-center">
+        <div class="active-timer" id="activeTimer">0:00</div>
+        <div class="active-warning hidden" id="activeWarning">2h limit approaching</div>
+      </div>
+      <div class="active-buttons">
+        <button class="btn-secondary" id="btnPause" onclick="togglePause()">Pause</button>
+        <button class="btn-danger" onclick="stopSession()">Stop</button>
+      </div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div id="viewSummary" class="hidden">
+      <div class="summary-elapsed" id="summaryElapsed">0:00</div>
+      <div class="limit-msg hidden" id="limitMsg"></div>
+
+      <div class="time-row">
+        <div class="time-field">
+          <div class="label">Start</div>
+          <input type="time" id="editStart">
+        </div>
+        <div class="time-field">
+          <div class="label">End</div>
+          <input type="time" id="editEnd">
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="label">Mood</div>
+        <div class="chip-group">
+          <div class="chip" data-group="mood" data-val="hard" onclick="selectChip(this)">Hard</div>
+          <div class="chip" data-group="mood" data-val="tired" onclick="selectChip(this)">Tired</div>
+          <div class="chip" data-group="mood" data-val="good" onclick="selectChip(this)">Good</div>
+        </div>
+      </div>
+
+      <div class="summary-section">
+        <div class="label">Last food</div>
+        <div class="chip-group">
+          <div class="chip" data-group="food" data-val="<1h" onclick="selectChip(this)">&lt;1h</div>
+          <div class="chip" data-group="food" data-val="1-2h" onclick="selectChip(this)">1–2h</div>
+          <div class="chip" data-group="food" data-val="2-3h" onclick="selectChip(this)">2–3h</div>
+          <div class="chip" data-group="food" data-val="3h+" onclick="selectChip(this)">3h+</div>
+        </div>
+      </div>
+
+      <div class="summary-comment">
+        <div class="label">Comment</div>
+        <textarea id="commentInput" placeholder="optional"></textarea>
+      </div>
+
+      <div class="summary-buttons">
+        <button class="btn-green" onclick="saveSession()">Save Session</button>
+        <button class="btn-danger" onclick="discardSummary()">Discard</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    // ── Config ─────────────────────────────────────────
+    const SHEET_URL   = 'YOUR_APPS_SCRIPT_URL';
+    const WARN_MS     = 105 * 60 * 1000;  // 1:45:00
+    const LIMIT_MS    = 120 * 60 * 1000;  // 2:00:00
+    const HB_INTERVAL = 10 * 60 * 1000;   // 10 min
+
+    // ── State ──────────────────────────────────────────
+    let timer        = new LiveTimer();
+    let sessionType  = 'weights';
+    let rafId        = null;
+    let hbTimer      = null;
+    let warned       = false;
+    let autoStopped  = false;
+    let summaryEndTs = null;
+
+    const LS = {
+      save() {
+        localStorage.setItem('ci_startTs',  timer.startTs  || '');
+        localStorage.setItem('ci_pausedMs', timer.pausedMs || 0);
+        localStorage.setItem('ci_pauseTs',  timer.pauseTs  || '');
+        localStorage.setItem('ci_status',   'active');
+        localStorage.setItem('ci_type',     sessionType);
+      },
+      clear() {
+        ['ci_startTs','ci_pausedMs','ci_pauseTs','ci_status','ci_type','ci_rowId']
+          .forEach(k => localStorage.removeItem(k));
+      },
+      load() {
+        return {
+          startTs:  parseInt(localStorage.getItem('ci_startTs'))  || null,
+          pausedMs: parseInt(localStorage.getItem('ci_pausedMs')) || 0,
+          pauseTs:  parseInt(localStorage.getItem('ci_pauseTs'))  || null,
+          status:   localStorage.getItem('ci_status'),
+          type:     localStorage.getItem('ci_type') || 'weights',
+          rowId:    localStorage.getItem('ci_rowId'),
+        };
+      }
+    };
+
+    // ── Pending queue ──────────────────────────────────
+    function storePending(payload) {
+      const queue = JSON.parse(localStorage.getItem('ci_pending') || '[]');
+      queue.push(payload);
+      localStorage.setItem('ci_pending', JSON.stringify(queue));
+    }
+
+    async function flushPending() {
+      const queue = JSON.parse(localStorage.getItem('ci_pending') || '[]');
+      if (!queue.length) return;
+      const remaining = [];
+      for (const p of queue) {
+        const ok = await sheetPost(p, true);
+        if (!ok) remaining.push(p);
+      }
+      localStorage.setItem('ci_pending', JSON.stringify(remaining));
+    }
+
+    // ── Sheet API ──────────────────────────────────────
+    async function sheetPost(data, skipQueue = false) {
+      if (!SHEET_URL || SHEET_URL === 'YOUR_APPS_SCRIPT_URL') {
+        if (!skipQueue) storePending(data);
+        return null;
+      }
+      try {
+        const res = await fetch(SHEET_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(data)
+        });
+        return await res.json();
+      } catch(e) {
+        if (!skipQueue) {
+          storePending(data);
+          showSyncNotice();
+        }
+        return null;
+      }
+    }
+
+    async function sheetGet() {
+      if (!SHEET_URL || SHEET_URL === 'YOUR_APPS_SCRIPT_URL') return null;
+      try {
+        const res = await fetch(`${SHEET_URL}?action=get&date=${todayKey()}`);
+        return await res.json();
+      } catch(e) {
+        return null;
+      }
+    }
+
+    function showSyncNotice() {
+      const el = document.getElementById('syncNotice');
+      el.classList.remove('hidden');
+      setTimeout(() => el.classList.add('hidden'), 4000);
+    }
+
+    // ── Row ID ─────────────────────────────────────────
+    function makeRowId() {
+      return `${todayKey()}-${Date.now()}`;
+    }
+
+    function getRowId() {
+      let id = localStorage.getItem('ci_rowId');
+      if (!id) {
+        id = makeRowId();
+        localStorage.setItem('ci_rowId', id);
+      }
+      return id;
+    }
+
+    function tsToTimeStr(ts) {
+      const d = new Date(ts);
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function weekday(ts) {
+      return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][new Date(ts).getDay()];
+    }
+
+    function formatDuration(ms) {
+      const s = Math.floor(ms / 1000);
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const r = s % 60;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(r).padStart(2,'0')}`;
+    }
+
+    // ── Type toggle ────────────────────────────────────
+    function selectType(type) {
+      sessionType = type;
+      document.getElementById('toggleWeights').classList.toggle('selected', type === 'weights');
+      document.getElementById('toggleCardio').classList.toggle('selected', type === 'cardio');
+    }
+
+    // ── Chip toggles ───────────────────────────────────
+    function selectChip(el) {
+      const group = el.dataset.group;
+      document.querySelectorAll(`.chip[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    function getChipVal(group) {
+      const el = document.querySelector(`.chip[data-group="${group}"].selected`);
+      return el ? el.dataset.val : '';
+    }
+
+    // ── View switching ─────────────────────────────────
+    function showView(id) {
+      ['viewIdle','viewResume','viewActive','viewSummary'].forEach(v => {
+        document.getElementById(v).classList.toggle('hidden', v !== id);
+      });
+    }
+
+    // ── Session start ──────────────────────────────────
+    function startSession() {
+      timer.start();
+      sessionType = document.getElementById('toggleWeights').classList.contains('selected') ? 'weights' : 'cardio';
+      warned      = false;
+      autoStopped = false;
+      LS.save();
+
+      const rowId = getRowId();
+      const startTs = timer.startTs;
+      sheetPost({
+        action: 'start',
+        rowId,
+        date: todayKey(),
+        weekday: weekday(startTs),
+        start: tsToTimeStr(startTs),
+        type: sessionType,
+        status: 'active',
+        created_at: new Date(startTs).toISOString()
+      });
+
+      startHB();
+      showView('viewActive');
+      document.getElementById('activeTypeLabel').textContent = sessionType.charAt(0).toUpperCase() + sessionType.slice(1);
+      runActiveLoop();
+    }
+
+    // ── Resume ─────────────────────────────────────────
+    function resumeSession() {
+      const s = LS.load();
+      sessionType = s.type;
+      timer.restore(s.startTs, s.pausedMs, s.pauseTs);
+      warned      = false;
+      autoStopped = false;
+
+      startHB();
+      showView('viewActive');
+      document.getElementById('activeTypeLabel').textContent = sessionType.charAt(0).toUpperCase() + sessionType.slice(1);
+      document.getElementById('btnPause').textContent = timer.running ? 'Pause' : 'Resume';
+      runActiveLoop();
+    }
+
+    // ── Pause/Resume ───────────────────────────────────
+    function togglePause() {
+      if (timer.running) {
+        timer.pause();
+        document.getElementById('btnPause').textContent = 'Resume';
+      } else {
+        timer.resume();
+        document.getElementById('btnPause').textContent = 'Pause';
+      }
+      LS.save();
+    }
+
+    // ── Active loop ────────────────────────────────────
+    function runActiveLoop() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(activeLoop);
+    }
+
+    function activeLoop() {
+      const elapsed = timer.elapsed();
+      document.getElementById('activeTimer').textContent = formatTime(elapsed);
+
+      const timerEl   = document.getElementById('activeTimer');
+      const warningEl = document.getElementById('activeWarning');
+
+      if (!warned && elapsed >= WARN_MS) {
+        warned = true;
+        timerEl.classList.add('warning-color');
+        warningEl.classList.remove('hidden');
+      }
+
+      if (!autoStopped && elapsed >= LIMIT_MS) {
+        autoStopped = true;
+        summaryEndTs = timer.startTs + timer.pausedMs + LIMIT_MS;
+        showSummaryView(elapsed, 'limit');
+        return;
+      }
+
+      rafId = requestAnimationFrame(activeLoop);
+    }
+
+    // ── Stop ───────────────────────────────────────────
+    function stopSession() {
+      if (rafId) cancelAnimationFrame(rafId);
+      stopHB();
+      summaryEndTs = Date.now();
+      showSummaryView(timer.elapsed(), null);
+    }
+
+    function stopNow() {
+      // Called from resume prompt — timer not running yet
+      const s = LS.load();
+      timer.restore(s.startTs, s.pausedMs, s.pauseTs);
+      sessionType = s.type;
+      summaryEndTs = Date.now();
+      showSummaryView(timer.elapsed(), null);
+    }
+
+    // ── Summary ────────────────────────────────────────
+    function showSummaryView(elapsed, reason) {
+      const startTs = timer.startTs;
+
+      document.getElementById('summaryElapsed').textContent = formatTime(elapsed);
+      document.getElementById('editStart').value = startTs ? tsToTimeStr(startTs) : '';
+      document.getElementById('editEnd').value   = tsToTimeStr(summaryEndTs || Date.now());
+
+      if (reason === 'limit') {
+        const msg = document.getElementById('limitMsg');
+        msg.textContent = '2h limit reached — session auto-stopped';
+        msg.classList.remove('hidden');
+      }
+
+      // Reset chips
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+      document.getElementById('commentInput').value = '';
+
+      showView('viewSummary');
+    }
+
+    async function saveSession() {
+      const rowId   = getRowId();
+      const startTs = timer.startTs;
+      const elapsed = timer.elapsed();
+      const startVal = document.getElementById('editStart').value;
+      const endVal   = document.getElementById('editEnd').value;
+      const mood     = getChipVal('mood');
+      const lastFood = getChipVal('food');
+      const comment  = document.getElementById('commentInput').value.trim();
+      const now      = new Date().toISOString();
+
+      await sheetPost({
+        action: 'stop',
+        rowId,
+        date: todayKey(),
+        weekday: weekday(startTs),
+        start: startVal,
+        end: endVal,
+        duration: formatDuration(elapsed),
+        type: sessionType,
+        mood,
+        last_food: lastFood,
+        comment,
+        status: 'done',
+        heartbeat_elapsed: Math.floor(elapsed / 1000),
+        created_at: new Date(startTs).toISOString(),
+        updated_at: now
+      });
+
+      LS.clear();
+      resetToIdle();
+    }
+
+    async function discardSummary() {
+      const rowId = getRowId();
+      await sheetPost({
+        action: 'discard',
+        rowId,
+        status: 'cancelled',
+        updated_at: new Date().toISOString()
+      });
+      LS.clear();
+      resetToIdle();
+    }
+
+    async function discardSession() {
+      const s = LS.load();
+      if (s.rowId) {
+        await sheetPost({
+          action: 'discard',
+          rowId: s.rowId,
+          status: 'cancelled',
+          updated_at: new Date().toISOString()
+        });
+      }
+      LS.clear();
+      resetToIdle();
+    }
+
+    function resetToIdle() {
+      if (rafId) cancelAnimationFrame(rafId);
+      stopHB();
+      timer = new LiveTimer();
+      warned = false;
+      autoStopped = false;
+      summaryEndTs = null;
+      document.getElementById('activeWarning').classList.add('hidden');
+      document.getElementById('activeTimer').classList.remove('warning-color');
+      document.getElementById('limitMsg').classList.add('hidden');
+      showView('viewIdle');
+    }
+
+    // ── Heartbeat ──────────────────────────────────────
+    function startHB() {
+      stopHB();
+      hbTimer = setInterval(() => {
+        LS.save();
+        sheetPost({
+          action: 'heartbeat',
+          rowId: getRowId(),
+          heartbeat_elapsed: Math.floor(timer.elapsed() / 1000),
+          updated_at: new Date().toISOString()
+        });
+      }, HB_INTERVAL);
+    }
+
+    function stopHB() {
+      if (hbTimer) { clearInterval(hbTimer); hbTimer = null; }
+    }
+
+    // ── Init ───────────────────────────────────────────
+    async function init() {
+      await flushPending();
+
+      const s = LS.load();
+
+      if (s.status === 'active' && s.startTs) {
+        const sessionDate = new Date(s.startTs);
+        const today = new Date();
+        const isSameDay =
+          sessionDate.getFullYear() === today.getFullYear() &&
+          sessionDate.getMonth()    === today.getMonth() &&
+          sessionDate.getDate()     === today.getDate();
+
+        if (isSameDay) {
+          const elapsed = s.pauseTs
+            ? s.pauseTs - s.startTs - s.pausedMs
+            : Date.now() - s.startTs - s.pausedMs;
+          const meta = `${s.type} · ${formatTime(elapsed)} elapsed · started ${tsToTimeStr(s.startTs)}`;
+          document.getElementById('resumeMeta').textContent = meta;
+          sessionType = s.type;
+          selectType(s.type);
+          showView('viewResume');
+          return;
+        } else {
+          // Stale session from another day — clear it
+          LS.clear();
+        }
+      }
+
+      // Check sheets for active session (non-blocking)
+      sheetGet().then(data => {
+        if (data && data.status === 'active' && data.rowId) {
+          // Restore from sheets if no local state
+          const current = LS.load();
+          if (!current.startTs && data.start) {
+            document.getElementById('resumeMeta').textContent =
+              `${data.type || 'weights'} · started ${data.start} (from cloud)`;
+            showView('viewResume');
+          }
+        }
+      });
+
+      showView('viewIdle');
+    }
+
+    init();
+  </script>
+</body>
+</html>

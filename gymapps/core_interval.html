@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Core Interval</title>
+  <link rel="stylesheet" href="shared.css">
+  <style>
+    .ci-page {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    /* ── IDLE ── */
+    #viewIdle {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ci-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.5rem;
+      margin-bottom: 14px;
+    }
+
+    .exercise-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+      justify-content: center;
+    }
+
+    .ex-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+
+    .ex-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.88rem;
+    }
+
+    .ex-dur {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .idle-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .idle-bottom {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* ── EDIT ── */
+    #viewEdit {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .edit-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+
+    .edit-list {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+      justify-content: center;
+    }
+
+    .edit-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 10px;
+    }
+
+    .edit-name-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      padding: 4px 4px;
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+
+    .edit-name-input:focus {
+      border-color: var(--violet);
+      outline: none;
+    }
+
+    .edit-dur-input {
+      width: 48px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      padding: 4px 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--text);
+      text-align: center;
+    }
+
+    .edit-dur-input:focus {
+      border-color: var(--violet);
+      outline: none;
+    }
+
+    .edit-move-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 0.7rem;
+      padding: 4px 7px;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+    }
+
+    .edit-move-btn:active { opacity: 0.6; }
+    .edit-move-btn:disabled { opacity: 0.2; }
+
+    .edit-dur-label {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+    }
+
+    .edit-field-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── ACTIVE ── */
+    #viewActive {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .active-top {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .lap-badge {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--violet);
+      background: rgba(108,99,245,0.1);
+      border: 1px solid rgba(108,99,245,0.2);
+      border-radius: 8px;
+      padding: 5px 10px;
+    }
+
+    .phase-badge {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.68rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .active-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      text-align: center;
+    }
+
+    .phase-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.6rem;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .phase-name.break-name {
+      color: var(--muted);
+      font-size: 1.2rem;
+    }
+
+    .phase-name.countin-name {
+      color: var(--muted);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .countdown-display {
+      font-family: 'DM Mono', monospace;
+      font-weight: 500;
+      font-size: 6rem;
+      line-height: 1;
+      color: var(--text);
+      letter-spacing: -0.03em;
+    }
+
+    .countdown-display.break-color { color: var(--amber); }
+    .countdown-display.countin-color { color: var(--violet); }
+
+    .next-hint {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    /* ── DONE ── */
+    #viewDone {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    .done-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2.4rem;
+      color: var(--green);
+    }
+
+    .done-sub {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="ci-page">
+
+    <div class="top-bar">
+      <a href="index.html">← back</a>
+    </div>
+
+    <!-- IDLE -->
+    <div id="viewIdle">
+      <div class="ci-title">Core Interval</div>
+      <div class="exercise-list" id="exerciseList"></div>
+      <div class="idle-buttons">
+        <button class="btn-pink" id="btnStart" onclick="startWorkout()">Start</button>
+        <div class="idle-bottom">
+          <button class="btn-secondary btn-sm" onclick="showEdit()" style="width:auto;padding:10px 18px;">Edit</button>
+          <div style="flex:1"></div>
+          <span class="label" style="align-self:center">3 laps · 8s breaks</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT -->
+    <div id="viewEdit" class="hidden">
+      <div class="edit-title">Edit Exercises</div>
+      <div class="edit-list" id="editList"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-secondary" style="flex:1" onclick="cancelEdit()">Cancel</button>
+        <button class="btn-primary" style="flex:2" onclick="saveEdit()">Save</button>
+      </div>
+    </div>
+
+    <!-- ACTIVE -->
+    <div id="viewActive" class="hidden">
+      <div class="active-top">
+        <span class="lap-badge" id="lapBadge">Lap 1</span>
+        <span class="phase-badge" id="phaseBadge"></span>
+      </div>
+      <div class="active-center">
+        <div class="phase-name" id="phaseName"></div>
+        <div class="countdown-display" id="countdownDisplay">5</div>
+        <div class="next-hint" id="nextHint"></div>
+      </div>
+      <div style="width:100%;padding-bottom:4px">
+        <button class="btn-danger btn-sm" style="width:auto;padding:10px 20px" onclick="abortWorkout()">Stop</button>
+      </div>
+    </div>
+
+    <!-- DONE -->
+    <div id="viewDone" class="hidden">
+      <div class="done-title">Well done.</div>
+      <div class="done-sub">3 laps complete</div>
+      <button class="btn-pink" style="width:100%;max-width:200px" onclick="resetToIdle()">Again</button>
+    </div>
+
+  </div>
+
+  <script src="shared.js"></script>
+  <script>
+    const LAPS           = 3;
+    const BREAK_DURATION = 8;
+    const COUNTIN_DURATION = 5;
+
+    const DEFAULT_EXERCISES = [
+      { name: 'Ab Wheel Rollout', duration: 40, midBeep: false },
+      { name: 'Leg Curl',         duration: 30, midBeep: false },
+      { name: 'Hang from Bar',    duration: 30, midBeep: true  },
+      { name: 'Bench Dip',        duration: 30, midBeep: false },
+    ];
+
+    let exercises = loadExercises();
+
+    function loadExercises() {
+      try {
+        const saved = localStorage.getItem('ci_exercises');
+        if (saved) return JSON.parse(saved);
+      } catch(e) {}
+      return DEFAULT_EXERCISES.map(e => ({ ...e }));
+    }
+
+    function saveExercises() {
+      localStorage.setItem('ci_exercises', JSON.stringify(exercises));
+    }
+
+    // ── Sequence building ──────────────────────────────
+    function buildSequence(exList) {
+      const seq = [];
+      for (let lap = 0; lap < LAPS; lap++) {
+        for (let ei = 0; ei < exList.length; ei++) {
+          const ex = exList[ei];
+          const isLast = ei === exList.length - 1 && lap === LAPS - 1;
+          seq.push({
+            type: 'exercise',
+            name: ex.name,
+            duration: ex.duration,
+            midBeep: ex.midBeep,
+            lap: lap + 1,
+            isLast
+          });
+          if (!isLast) {
+            const nextEx = exList[(ei + 1) % exList.length];
+            const nextIsNewLap = ei === exList.length - 1;
+            seq.push({
+              type: 'break',
+              duration: BREAK_DURATION,
+              lap: lap + 1,
+              nextName: nextIsNewLap ? exList[0].name : nextEx.name,
+              nextLap: nextIsNewLap ? lap + 2 : lap + 1
+            });
+          }
+        }
+      }
+      return seq;
+    }
+
+    // ── Idle render ────────────────────────────────────
+    function renderIdle() {
+      const list = document.getElementById('exerciseList');
+      list.innerHTML = '';
+      exercises.forEach(ex => {
+        const row = document.createElement('div');
+        row.className = 'ex-row';
+        row.innerHTML = `
+          <span class="ex-name">${ex.name}</span>
+          <span class="ex-dur">${ex.duration}s</span>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    renderIdle();
+
+    // ── Edit mode ─────────────────────────────────────
+    let editDraft = [];
+
+    function showEdit() {
+      editDraft = exercises.map(e => ({ ...e }));
+      renderEdit();
+      showView('viewEdit');
+    }
+
+    function renderEdit() {
+      const list = document.getElementById('editList');
+      list.innerHTML = '';
+      editDraft.forEach((ex, i) => {
+        const row = document.createElement('div');
+        row.className = 'edit-row';
+        row.innerHTML = `
+          <input class="edit-name-input" type="text" value="${ex.name}" data-i="${i}" placeholder="Exercise name">
+          <div class="edit-field-group">
+            <span class="edit-dur-label">sec</span>
+            <input class="edit-dur-input" type="number" value="${ex.duration}" min="5" max="300" data-i="${i}">
+          </div>
+          <button class="edit-move-btn" data-dir="up" data-i="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button class="edit-move-btn" data-dir="dn" data-i="${i}" ${i === editDraft.length - 1 ? 'disabled' : ''}>↓</button>
+        `;
+        list.appendChild(row);
+      });
+
+      list.querySelectorAll('.edit-name-input').forEach(inp => {
+        inp.addEventListener('input', e => {
+          editDraft[parseInt(e.target.dataset.i)].name = e.target.value;
+        });
+      });
+
+      list.querySelectorAll('.edit-dur-input').forEach(inp => {
+        inp.addEventListener('input', e => {
+          const v = Math.max(5, Math.min(300, parseInt(e.target.value) || 10));
+          editDraft[parseInt(e.target.dataset.i)].duration = v;
+        });
+      });
+
+      list.querySelectorAll('.edit-move-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+          const i   = parseInt(e.target.dataset.i);
+          const dir = e.target.dataset.dir;
+          if (dir === 'up' && i > 0) {
+            [editDraft[i], editDraft[i-1]] = [editDraft[i-1], editDraft[i]];
+          } else if (dir === 'dn' && i < editDraft.length - 1) {
+            [editDraft[i], editDraft[i+1]] = [editDraft[i+1], editDraft[i]];
+          }
+          renderEdit();
+        });
+      });
+    }
+
+    function cancelEdit() { showView('viewIdle'); }
+
+    function saveEdit() {
+      exercises = editDraft.map(e => ({
+        ...e,
+        duration: Math.max(5, Math.min(300, parseInt(e.duration) || 10)),
+        name: (e.name || 'Exercise').trim()
+      }));
+      saveExercises();
+      renderIdle();
+      showView('viewIdle');
+    }
+
+    // ── Workout engine ─────────────────────────────────
+    let sequence    = [];
+    let seqIndex    = 0;
+    let phaseStartTs = 0;
+    let midBeeped   = false;
+    let rafId       = null;
+
+    const lapBadge       = document.getElementById('lapBadge');
+    const phaseBadge     = document.getElementById('phaseBadge');
+    const phaseName      = document.getElementById('phaseName');
+    const countdownDisp  = document.getElementById('countdownDisplay');
+    const nextHint       = document.getElementById('nextHint');
+
+    function startWorkout() {
+      sequence   = buildSequence(exercises);
+      seqIndex   = -1; // -1 = count-in
+      beep(660, 0.08, 0.5);
+      showView('viewActive');
+      enterCountIn();
+    }
+
+    function enterCountIn() {
+      seqIndex     = -1;
+      phaseStartTs = Date.now();
+      midBeeped    = false;
+
+      lapBadge.textContent      = 'Lap 1';
+      phaseBadge.textContent    = '';
+      phaseName.className       = 'phase-name countin-name';
+      phaseName.textContent     = 'Get into position';
+      countdownDisp.className   = 'countdown-display countin-color';
+      nextHint.textContent      = exercises[0].name;
+
+      scheduleLoop();
+    }
+
+    function enterPhase(index) {
+      seqIndex     = index;
+      phaseStartTs = Date.now();
+      midBeeped    = false;
+      const item   = sequence[index];
+
+      if (item.type === 'exercise') {
+        lapBadge.textContent    = `Lap ${item.lap}`;
+        phaseBadge.textContent  = `${item.lap} of ${LAPS}`;
+        phaseName.className     = 'phase-name';
+        phaseName.textContent   = item.name;
+        countdownDisp.className = 'countdown-display';
+        nextHint.textContent    = '';
+        beep(880, 0.12, 0.75);
+      } else {
+        // break
+        lapBadge.textContent    = `Lap ${item.lap}`;
+        phaseBadge.textContent  = 'break';
+        phaseName.className     = 'phase-name break-name';
+        phaseName.textContent   = 'Rest';
+        countdownDisp.className = 'countdown-display break-color';
+        nextHint.textContent    = item.nextName || '';
+        beep(660, 0.1, 0.6);
+      }
+
+      scheduleLoop();
+    }
+
+    function scheduleLoop() {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(loop);
+    }
+
+    function loop() {
+      const now       = Date.now();
+      const elapsed   = now - phaseStartTs;
+
+      // Count-in phase
+      if (seqIndex === -1) {
+        const remaining = COUNTIN_DURATION - Math.floor(elapsed / 1000);
+        countdownDisp.textContent = Math.max(0, remaining);
+        if (elapsed >= COUNTIN_DURATION * 1000) {
+          enterPhase(0);
+          return;
+        }
+        rafId = requestAnimationFrame(loop);
+        return;
+      }
+
+      const item      = sequence[seqIndex];
+      const remaining = item.duration - Math.floor(elapsed / 1000);
+      countdownDisp.textContent = Math.max(0, remaining);
+
+      // Mid-beep for exercises with midBeep flag
+      if (item.type === 'exercise' && item.midBeep && !midBeeped) {
+        if (elapsed >= item.duration * 500) {
+          midBeeped = true;
+          beep(660, 0.1, 0.5);
+        }
+      }
+
+      // Phase complete
+      if (elapsed >= item.duration * 1000) {
+        const next = seqIndex + 1;
+        if (next >= sequence.length) {
+          beep(880, 0.15, 0.8);
+          setTimeout(() => beep(1046, 0.15, 0.8), 180);
+          showDone();
+          return;
+        }
+        enterPhase(next);
+        return;
+      }
+
+      rafId = requestAnimationFrame(loop);
+    }
+
+    function showDone() {
+      if (rafId) cancelAnimationFrame(rafId);
+      showView('viewDone');
+    }
+
+    function abortWorkout() {
+      if (rafId) cancelAnimationFrame(rafId);
+      showView('viewIdle');
+    }
+
+    function resetToIdle() {
+      showView('viewIdle');
+    }
+
+    // ── View switching ─────────────────────────────────
+    function showView(id) {
+      ['viewIdle','viewEdit','viewActive','viewDone'].forEach(v => {
+        document.getElementById(v).classList.toggle('hidden', v !== id);
+      });
+    }
+  </script>
+</body>
+</html>
