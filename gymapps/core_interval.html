@@ -91,22 +91,28 @@
 
     .edit-row {
       display: flex;
-      align-items: center;
-      gap: 6px;
+      flex-direction: column;
+      gap: 8px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 8px 10px;
+      padding: 10px 12px;
+    }
+
+    .edit-row-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .edit-name-input {
-      flex: 1;
+      width: 100%;
       background: transparent;
       border: none;
       border-bottom: 1px solid var(--border);
       border-radius: 0;
-      padding: 4px 4px;
-      font-size: 0.8rem;
+      padding: 4px 2px;
+      font-size: 1rem;
       color: var(--text);
     }
 
@@ -434,7 +440,10 @@
         dnBtn.dataset.i = i; dnBtn.textContent = '↓';
         if (i === editDraft.length - 1) dnBtn.disabled = true;
 
-        row.append(nameIn, group, upBtn, dnBtn);
+        const controls = document.createElement('div');
+        controls.className = 'edit-row-controls';
+        controls.append(group, upBtn, dnBtn);
+        row.append(nameIn, controls);
         list.appendChild(row);
       });
 
