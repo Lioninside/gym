@@ -606,7 +606,8 @@ function json(d) {
     }
 
     function toggleSheetsPanel() {
-      document.getElementById('sheetsBody').classList.toggle('hidden');
+      const hidden = document.getElementById('sheetsBody').classList.toggle('hidden');
+      if (hidden) document.getElementById('testResult').classList.add('hidden');
     }
 
     function saveSheetUrl() {
