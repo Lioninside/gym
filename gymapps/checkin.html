@@ -559,12 +559,15 @@ function json(d) {
       const url = getSheetUrl();
       if (!url) { if (!skipQueue) storePending(data); return null; }
       try {
-        const res = await fetch(url, {
+        // no-cors avoids CORS preflight — GAS doesn't send CORS headers for cross-origin POSTs.
+        // We can't read the response body in no-cors mode, so we assume success on no exception.
+        await fetch(url, {
           method: 'POST',
+          mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(data)
         });
-        return await res.json();
+        return { ok: true };
       } catch(e) {
         if (!skipQueue) { storePending(data); showSyncNotice(); }
         return null;
@@ -616,12 +619,18 @@ function json(d) {
       result.style.color = '';
       result.classList.remove('hidden');
       try {
-        const res = await fetch(`${val}?action=get&date=${todayKey()}`);
-        await res.json();
-        result.textContent = '✓ Connection successful!';
+        // Use no-cors for test too — GAS blocks CORS reads, but a successful no-cors
+        // response (opaque) confirms the URL is reachable.
+        await fetch(val, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({ action: 'ping' })
+        });
+        result.textContent = '✓ URL reachable — if data is not appearing in Sheets, check the Apps Script is deployed as Anyone.';
         result.style.color = '#75b798';
       } catch(e) {
-        result.textContent = '✗ Failed — check URL and that deployment is set to Anyone.';
+        result.textContent = '✗ Network error — check the URL is correct.';
         result.style.color = 'var(--red)';
       }
     }
@@ -784,11 +793,7 @@ function json(d) {
         LS.clear(); resetToIdle(); return;
       }
 
-      const result = await sheetPost(payload);
-      if (!result) {
-        // sheetPost already queued it and showed sync notice
-        if (!confirm('Could not reach Google Sheets.\n\nSession saved locally and will retry next time.\n\nContinue?')) return;
-      }
+      await sheetPost(payload);
       LS.clear(); resetToIdle();
     }
 
