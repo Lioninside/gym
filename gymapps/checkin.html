@@ -296,6 +296,46 @@
       margin-top: auto;
       padding-top: 4px;
     }
+
+    #viewSaved {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .saved-check {
+      font-size: 3.5rem;
+      line-height: 1;
+      color: #75b798;
+    }
+
+    .saved-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #75b798;
+    }
+
+    .saved-row {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .saved-note {
+      font-size: 0.8rem;
+      color: var(--amber);
+      max-width: 260px;
+    }
+
+    .saved-ok {
+      margin-top: 10px;
+      width: 160px;
+    }
   </style>
 </head>
 <body>
@@ -496,6 +536,15 @@ function json(d) {
         <button class="btn-success" id="btnSave" onclick="saveSession()">Save Session</button>
         <button class="btn-danger"  onclick="discardSummary()">Discard</button>
       </div>
+    </div>
+
+    <!-- SAVED -->
+    <div id="viewSaved" class="hidden">
+      <div class="saved-check">✓</div>
+      <div class="saved-title" id="savedTitle">Saved in Sheets</div>
+      <div class="saved-row" id="savedRow"></div>
+      <div class="saved-note hidden" id="savedNote"></div>
+      <button class="btn-success saved-ok" onclick="window.location.href='index.html'">OK</button>
     </div>
 
   </div>
@@ -742,8 +791,8 @@ function selectType(type) {
       return el ? el.dataset.val : '';
     }
 
-function showView(id) {
-      ['viewIdle','viewResume','viewActive','viewSummary'].forEach(v => {
+    function showView(id) {
+      ['viewIdle','viewResume','viewActive','viewSummary','viewSaved'].forEach(v => {
         document.getElementById(v).classList.toggle('hidden', v !== id);
       });
     }
@@ -862,7 +911,29 @@ function startSession() {
       }
 
       await sheetPost(payload);
-      LS.clear(); window.location.href = 'index.html';
+      LS.clear();
+      stopHB();
+
+      const verified = await sheetVerify();
+      showSavedView(verified, elapsed, sessionType);
+    }
+
+    function showSavedView(sheetData, elapsed, type) {
+      const titleEl = document.getElementById('savedTitle');
+      const rowEl   = document.getElementById('savedRow');
+      const noteEl  = document.getElementById('savedNote');
+
+      if (sheetData && sheetData.date) {
+        titleEl.textContent = '✓ Saved in Sheets';
+        rowEl.textContent   = `${fmtEntryDate(sheetData.date)} · ${sheetData.type}\n${sheetData.duration}`;
+        noteEl.classList.add('hidden');
+      } else {
+        titleEl.textContent = '✓ Session saved';
+        rowEl.textContent   = `${fmtEntryDate(todayKey())} · ${type}\n${formatDuration(elapsed)}`;
+        noteEl.textContent  = 'Could not read back from Sheets — check the sheet to confirm.';
+        noteEl.classList.remove('hidden');
+      }
+      showView('viewSaved');
     }
 
     async function discardSummary() {
