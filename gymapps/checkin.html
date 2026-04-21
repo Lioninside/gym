@@ -493,7 +493,7 @@ function json(d) {
       </div>
 
       <div class="summary-buttons">
-        <button class="btn-success" onclick="saveSession()">Save Session</button>
+        <button class="btn-success" id="btnSave" onclick="saveSession()">Save Session</button>
         <button class="btn-danger"  onclick="discardSummary()">Discard</button>
       </div>
     </div>
@@ -601,6 +601,23 @@ function json(d) {
       } catch(e) { return { ok: false }; }
     }
 
+    async function sheetVerify() {
+      const url = getSheetUrl();
+      if (!url) return null;
+      try {
+        const res = await fetch(`${url}?action=latest`, { signal: AbortSignal.timeout(5000) });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (data && data.date) localStorage.setItem('ci_last_entry', JSON.stringify(data));
+        return data;
+      } catch(e) { return null; }
+    }
+
+    function fmtEntryDate(iso) {
+      const d = new Date(iso + 'T12:00:00');
+      return `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]} ${d.getDate()}`;
+    }
+
     function showSyncNotice() {
       const el = document.getElementById('syncNotice');
       el.classList.remove('hidden');
@@ -680,10 +697,23 @@ function json(d) {
         setupEl.classList.add('not-configured');
         setupEl.classList.remove('connected');
       } else {
-        statusEl.textContent = '✓ reachable';
-        statusEl.className   = 'sheets-toggle-status ok';
+        statusEl.className = 'sheets-toggle-status ok';
         setupEl.classList.add('connected');
         setupEl.classList.remove('not-configured');
+        const cached = localStorage.getItem('ci_last_entry');
+        if (cached) {
+          try {
+            const v = JSON.parse(cached);
+            statusEl.textContent = `✓ last: ${fmtEntryDate(v.date)} · ${v.type}`;
+          } catch(e) { statusEl.textContent = '✓ reachable'; }
+        } else {
+          statusEl.textContent = '✓ reachable';
+        }
+        sheetVerify().then(data => {
+          if (data && data.date) {
+            statusEl.textContent = `✓ last: ${fmtEntryDate(data.date)} · ${data.type}`;
+          }
+        });
       }
     }
 
@@ -804,6 +834,10 @@ function startSession() {
     }
 
     async function saveSession() {
+      const btn = document.getElementById('btnSave');
+      btn.disabled = true;
+      btn.textContent = 'Saving…';
+
       const elapsed = timer.elapsed();
       const payload = {
         action:'stop', rowId:getRowId(), date:todayKey(), weekday:weekday(timer.startTs),
@@ -819,7 +853,11 @@ function startSession() {
 
       if (!getSheetUrl()) {
         storePending(payload);
-        if (!confirm('Google Sheets is not connected.\n\nSession saved locally and will sync when you set up Sheets.\n\nContinue?')) return;
+        if (!confirm('Google Sheets is not connected.\n\nSession saved locally and will sync when you set up Sheets.\n\nContinue?')) {
+          btn.disabled = false;
+          btn.textContent = 'Save Session';
+          return;
+        }
         LS.clear(); window.location.href = 'index.html'; return;
       }
 
