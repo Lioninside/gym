@@ -491,6 +491,7 @@
     let seqIndex     = 0;
     let phaseStartTs = 0;
     let midBeeped    = false;
+    let countBeep    = -1;
     let rafId        = null;
 
     const lapBadge      = document.getElementById('lapBadge');
@@ -511,6 +512,7 @@
       seqIndex     = -1;
       phaseStartTs = Date.now();
       midBeeped    = false;
+      countBeep    = -1;
 
       lapBadge.textContent    = 'Lap 1';
       phaseBadge.textContent  = '';
@@ -526,6 +528,7 @@
       seqIndex     = index;
       phaseStartTs = Date.now();
       midBeeped    = false;
+      countBeep    = -1;
       const item   = sequence[index];
 
       if (item.type === 'exercise') {
@@ -535,7 +538,8 @@
         phaseName.textContent   = item.name;
         countdownDisp.className = 'countdown-display';
         nextHint.textContent    = '';
-        beep(880, 0.12, 0.75);
+        beep(880, 0.1, 0.9);
+        setTimeout(() => beep(1046, 0.15, 1.0), 120);
       } else {
         lapBadge.textContent    = `Lap ${item.lap}`;
         phaseBadge.textContent  = 'break';
@@ -543,7 +547,7 @@
         phaseName.textContent   = 'Rest';
         countdownDisp.className = 'countdown-display break-color';
         nextHint.textContent    = item.nextName || '';
-        beep(660, 0.1, 0.6);
+        beep(440, 0.25, 0.65);
       }
 
       scheduleLoop();
@@ -575,6 +579,11 @@
           midBeeped = true;
           beep(660, 0.1, 0.5);
         }
+      }
+
+      if (item.type === 'break' && remaining > 0 && remaining <= 3 && remaining !== countBeep) {
+        countBeep = remaining;
+        beep(880, 0.07, 0.4 + (3 - remaining) * 0.15);
       }
 
       if (elapsed >= item.duration * 1000) {
